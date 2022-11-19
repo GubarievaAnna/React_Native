@@ -25,7 +25,7 @@ const LoginScreen = () => {
     setPassword("");
   };
 
-  const registerHandler = () => {
+  const loginHandler = () => {
     if (!email || !password) {
       alert("Введите все данные");
       return;
@@ -59,6 +59,7 @@ const LoginScreen = () => {
               value={email}
               onChangeText={emailHandler}
               placeholderTextColor="#BDBDBD"
+              selectionColor="#212121"
               style={styles.input}
             />
             <View style={styles.lastInput}>
@@ -67,6 +68,7 @@ const LoginScreen = () => {
                 value={password}
                 onChangeText={passwordHandler}
                 placeholderTextColor="#BDBDBD"
+                selectionColor="#212121"
                 style={styles.input}
                 secureTextEntry={secure}
               />
@@ -81,7 +83,7 @@ const LoginScreen = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.btn}
-              onPress={registerHandler}
+              onPress={loginHandler}
             >
               <Text style={styles.btnTitle}>Войти</Text>
             </TouchableOpacity>

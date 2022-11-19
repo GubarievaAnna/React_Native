@@ -62,6 +62,7 @@ const RegistrationScreen = () => {
               value={login}
               onChangeText={loginHandler}
               placeholderTextColor="#BDBDBD"
+              selectionColor="#212121"
               style={styles.input}
             />
             <TextInput
@@ -69,6 +70,7 @@ const RegistrationScreen = () => {
               value={email}
               onChangeText={emailHandler}
               placeholderTextColor="#BDBDBD"
+              selectionColor="#212121"
               style={styles.input}
             />
             <View style={styles.lastInput}>
@@ -77,6 +79,7 @@ const RegistrationScreen = () => {
                 value={password}
                 onChangeText={passwordHandler}
                 placeholderTextColor="#BDBDBD"
+                selectionColor="#212121"
                 style={styles.input}
                 secureTextEntry={secure}
               />
