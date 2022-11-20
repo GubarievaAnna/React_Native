@@ -14,7 +14,9 @@ import photo from "../assets/images/photo_bg.png";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
+  const [activeEmail, setActiveEmail] = useState(false);
   const [password, setPassword] = useState("");
+  const [activePassword, setActivePassword] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
 
@@ -60,7 +62,9 @@ const LoginScreen = () => {
               onChangeText={emailHandler}
               placeholderTextColor="#BDBDBD"
               selectionColor="#212121"
-              style={styles.input}
+              onBlur={() => setActiveEmail(false)}
+              onFocus={() => setActiveEmail(true)}
+              style={activeEmail ? styles.activeInput : styles.input}
             />
             <View style={styles.lastInput}>
               <TextInput
@@ -69,8 +73,10 @@ const LoginScreen = () => {
                 onChangeText={passwordHandler}
                 placeholderTextColor="#BDBDBD"
                 selectionColor="#212121"
-                style={styles.input}
                 secureTextEntry={secure}
+                onBlur={() => setActivePassword(false)}
+                onFocus={() => setActivePassword(true)}
+                style={activePassword ? styles.activeInput : styles.input}
               />
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -87,7 +93,12 @@ const LoginScreen = () => {
             >
               <Text style={styles.btnTitle}>Войти</Text>
             </TouchableOpacity>
-
+            <View style={styles.wrapper}>
+              <Text style={styles.link}>Нет аккаунта? </Text>
+              <TouchableOpacity activeOpacity={0.8}>
+                <Text style={styles.link}>Зарегистрироваться</Text>
+              </TouchableOpacity>
+            </View>
             {/* </KeyboardAvoidingView> */}
           </View>
         </TouchableWithoutFeedback>
@@ -136,6 +147,17 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
   },
+  activeInput: {
+    height: 50,
+
+    backgroundColor: "#FFF",
+    color: "#212121",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#FF6C00",
+    padding: 16,
+    marginBottom: 16,
+  },
   lastInput: {
     position: "relative",
     marginBottom: 43,
@@ -154,12 +176,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6C00",
     borderRadius: 100,
     paddingVertical: 16,
+    marginBottom: 16,
   },
   btnTitle: {
     textAlign: "center",
     fontSize: 16,
     lineHeight: 19,
     color: "#FFF",
+  },
+  wrapper: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  link: {
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#1B4371",
   },
 });
 
