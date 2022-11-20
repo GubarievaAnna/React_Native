@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import photo from "../assets/images/photo_bg.png";
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState("");
   const [isActiveLogin, setIsActiveLogin] = useState(false);
   const [email, setEmail] = useState("");
@@ -32,7 +32,7 @@ const RegistrationScreen = () => {
     setPassword("");
   };
 
-  const registerHandler = () => {
+  const registerHandler = ({ navigation }) => {
     if (!login || !email || !password) {
       alert("Введите все данные");
       return;
@@ -156,7 +156,10 @@ const RegistrationScreen = () => {
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <Text style={styles.link}>Уже есть аккаунт? </Text>
-                <TouchableOpacity activeOpacity={0.8}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => navigation.navigate("Login")}
+                >
                   <Text style={styles.link}>Войти</Text>
                 </TouchableOpacity>
               </View>

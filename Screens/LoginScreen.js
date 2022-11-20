@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import photo from "../assets/images/photo_bg.png";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [isActiveEmail, setIsActiveEmail] = useState(false);
   const [password, setPassword] = useState("");
@@ -48,7 +48,6 @@ const LoginScreen = () => {
     setSecureText("Показать");
   };
 
-  console.log(Platform.OS);
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -134,7 +133,10 @@ const LoginScreen = () => {
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <Text style={styles.link}>Нет аккаунта? </Text>
-                <TouchableOpacity activeOpacity={0.8}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => navigation.navigate("Register")}
+                >
                   <Text style={styles.link}>Зарегистрироваться</Text>
                 </TouchableOpacity>
               </View>
