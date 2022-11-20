@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
   Keyboard,
   TouchableOpacity,
   Text,
@@ -62,66 +61,92 @@ const RegistrationScreen = () => {
     >
       <View style={styles.container}>
         <ImageBackground source={photo} style={styles.background}>
-          <View style={styles.form}>
-            <KeyboardAvoidingView // определяем ОС и настраиваем поведение клавиатуры
-              behavior={Platform.OS == "ios" ? "padding" : "height"}
+          <View
+            style={{
+              ...styles.form,
+              paddingBottom: Platform.OS == "android" && showKeyboard ? 0 : 78,
+            }}
+          >
+            <Text style={styles.title}>Регистрация</Text>
+            <TextInput
+              placeholder="Логин"
+              value={login}
+              onChangeText={loginHandler}
+              placeholderTextColor="#BDBDBD"
+              selectionColor="#212121"
+              onBlur={() => {
+                setIsActiveLogin(false);
+              }}
+              onFocus={() => {
+                setIsActiveLogin(true);
+                setShowKeyboard(true);
+              }}
+              style={isActiveLogin ? styles.activeInput : styles.input}
+            />
+            <TextInput
+              placeholder="Адрес электронной почты"
+              value={email}
+              onChangeText={emailHandler}
+              placeholderTextColor="#BDBDBD"
+              selectionColor="#212121"
+              onBlur={() => {
+                setIsActiveEmail(false);
+              }}
+              onFocus={() => {
+                setIsActiveEmail(true);
+                setShowKeyboard(true);
+              }}
+              style={isActiveEmail ? styles.activeInput : styles.input}
+            />
+            <View
+              style={{
+                ...styles.lastInput,
+                marginBottom:
+                  Platform.OS == "android" && showKeyboard ? 32 : 43,
+              }}
             >
-              <Text style={styles.title}>Регистрация</Text>
               <TextInput
-                placeholder="Логин"
-                value={login}
-                onChangeText={loginHandler}
+                placeholder="Пароль"
+                value={password}
+                onChangeText={passwordHandler}
                 placeholderTextColor="#BDBDBD"
                 selectionColor="#212121"
+                secureTextEntry={secure}
                 onBlur={() => {
-                  setIsActiveLogin(false);
+                  setIsActivePassword(false);
                 }}
                 onFocus={() => {
-                  setIsActiveLogin(true);
+                  setIsActivePassword(true);
                   setShowKeyboard(true);
                 }}
-                style={isActiveLogin ? styles.activeInput : styles.input}
+                style={
+                  isActivePassword
+                    ? {
+                        ...styles.activeInput,
+                        marginBottom:
+                          Platform.OS == "ios" && showKeyboard ? 165 : 0,
+                      }
+                    : {
+                        ...styles.input,
+                        marginBottom:
+                          Platform.OS == "ios" && showKeyboard ? 165 : 0,
+                      }
+                }
               />
-              <TextInput
-                placeholder="Адрес электронной почты"
-                value={email}
-                onChangeText={emailHandler}
-                placeholderTextColor="#BDBDBD"
-                selectionColor="#212121"
-                onBlur={() => {
-                  setIsActiveEmail(false);
-                }}
-                onFocus={() => {
-                  setIsActiveEmail(true);
-                  setShowKeyboard(true);
-                }}
-                style={isActiveEmail ? styles.activeInput : styles.input}
-              />
-              <View style={styles.lastInput}>
-                <TextInput
-                  placeholder="Пароль"
-                  value={password}
-                  onChangeText={passwordHandler}
-                  placeholderTextColor="#BDBDBD"
-                  selectionColor="#212121"
-                  secureTextEntry={secure}
-                  onBlur={() => {
-                    setIsActivePassword(false);
-                  }}
-                  onFocus={() => {
-                    setIsActivePassword(true);
-                    setShowKeyboard(true);
-                  }}
-                  style={isActivePassword ? styles.activeInput : styles.input}
-                />
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={showPassword}
-                  style={styles.lastInputBtn}
-                >
-                  <Text style={styles.lastInputText}>{secureText}</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={showPassword}
+                style={styles.lastInputBtn}
+              >
+                <Text style={styles.lastInputText}>{secureText}</Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                display:
+                  Platform.OS == "android" && showKeyboard ? "none" : "flex",
+              }}
+            >
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
@@ -135,7 +160,7 @@ const RegistrationScreen = () => {
                   <Text style={styles.link}>Войти</Text>
                 </TouchableOpacity>
               </View>
-            </KeyboardAvoidingView>
+            </View>
           </View>
         </ImageBackground>
       </View>
@@ -161,7 +186,6 @@ const styles = StyleSheet.create({
 
     paddingTop: 92,
     paddingHorizontal: 16,
-    paddingBottom: 78,
   },
   title: {
     textAlign: "center",
@@ -197,7 +221,6 @@ const styles = StyleSheet.create({
   },
   lastInput: {
     position: "relative",
-    marginBottom: 27,
   },
   lastInputBtn: {
     position: "absolute",
