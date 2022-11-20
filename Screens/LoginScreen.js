@@ -4,7 +4,8 @@ import {
   View,
   TextInput,
   TouchableWithoutFeedback,
-  //   KeyboardAvoidingView,
+  KeyboardAvoidingView,
+  Platform,
   Keyboard,
   TouchableOpacity,
   Text,
@@ -14,9 +15,10 @@ import photo from "../assets/images/photo_bg.png";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
-  const [activeEmail, setActiveEmail] = useState(false);
+  const [isActiveEmail, setIsActiveEmail] = useState(false);
   const [password, setPassword] = useState("");
-  const [activePassword, setActivePassword] = useState(false);
+  const [isActivePassword, setIsActivePassword] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
 
@@ -32,7 +34,7 @@ const LoginScreen = () => {
       alert("Введите все данные");
       return;
     }
-    console.log(`Почта ${email}, пароль ${password}`);
+    console.log({ email, password });
     reset();
   };
 
@@ -48,62 +50,73 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground source={photo} style={styles.background}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        setShowKeyboard(false);
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <ImageBackground source={photo} style={styles.background}>
           <View style={styles.form}>
-            {/* <KeyboardAvoidingView // определяем ОС и настраиваем поведение клавиатуры
-          behavior="padding"
-        > */}
-            <Text style={styles.title}>Войти</Text>
-            <TextInput
-              placeholder="Адрес электронной почты"
-              value={email}
-              onChangeText={emailHandler}
-              placeholderTextColor="#BDBDBD"
-              selectionColor="#212121"
-              onBlur={() => setActiveEmail(false)}
-              onFocus={() => setActiveEmail(true)}
-              style={activeEmail ? styles.activeInput : styles.input}
-            />
-            <View style={styles.lastInput}>
+            <KeyboardAvoidingView // определяем ОС и настраиваем поведение клавиатуры
+              behavior={Platform.OS == "ios" ? "padding" : "height"}
+            >
+              <Text style={styles.title}>Войти</Text>
               <TextInput
-                placeholder="Пароль"
-                value={password}
-                onChangeText={passwordHandler}
+                placeholder="Адрес электронной почты"
+                value={email}
+                onChangeText={emailHandler}
                 placeholderTextColor="#BDBDBD"
                 selectionColor="#212121"
-                secureTextEntry={secure}
-                onBlur={() => setActivePassword(false)}
-                onFocus={() => setActivePassword(true)}
-                style={activePassword ? styles.activeInput : styles.input}
+                onBlur={() => setIsActiveEmail(false)}
+                onFocus={() => {
+                  setIsActiveEmail(true);
+                  setShowKeyboard(true);
+                }}
+                style={isActiveEmail ? styles.activeInput : styles.input}
               />
+              <View style={styles.lastInput}>
+                <TextInput
+                  placeholder="Пароль"
+                  value={password}
+                  onChangeText={passwordHandler}
+                  placeholderTextColor="#BDBDBD"
+                  selectionColor="#212121"
+                  secureTextEntry={secure}
+                  onBlur={() => setIsActivePassword(false)}
+                  onFocus={() => {
+                    setIsActivePassword(true);
+                    setShowKeyboard(true);
+                  }}
+                  style={isActivePassword ? styles.activeInput : styles.input}
+                />
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={showPassword}
+                  style={styles.lastInputBtn}
+                >
+                  <Text style={styles.lastInputText}>{secureText}</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={showPassword}
-                style={styles.lastInputBtn}
+                style={styles.btn}
+                onPress={loginHandler}
               >
-                <Text style={styles.lastInputText}>{secureText}</Text>
+                <Text style={styles.btnTitle}>Войти</Text>
               </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.btn}
-              onPress={loginHandler}
-            >
-              <Text style={styles.btnTitle}>Войти</Text>
-            </TouchableOpacity>
-            <View style={styles.wrapper}>
-              <Text style={styles.link}>Нет аккаунта? </Text>
-              <TouchableOpacity activeOpacity={0.8}>
-                <Text style={styles.link}>Зарегистрироваться</Text>
-              </TouchableOpacity>
-            </View>
-            {/* </KeyboardAvoidingView> */}
+              <View style={styles.wrapper}>
+                <Text style={styles.link}>Нет аккаунта? </Text>
+                <TouchableOpacity activeOpacity={0.8}>
+                  <Text style={styles.link}>Зарегистрироваться</Text>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
           </View>
-        </TouchableWithoutFeedback>
-      </ImageBackground>
-    </View>
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -128,10 +141,10 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    // fontWeight: 500,
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
     lineHeight: 35,
-    // letterSpacing: "0.01em",
+    letterSpacing: 0.01,
     color: "#212121",
 
     marginBottom: 33,
@@ -168,6 +181,7 @@ const styles = StyleSheet.create({
     top: 16,
   },
   lastInputText: {
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
@@ -180,6 +194,7 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     textAlign: "center",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#FFF",
@@ -191,6 +206,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   link: {
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",

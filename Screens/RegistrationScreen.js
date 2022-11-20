@@ -4,21 +4,23 @@ import {
   View,
   TextInput,
   TouchableWithoutFeedback,
-  //   KeyboardAvoidingView,
+  KeyboardAvoidingView,
   Keyboard,
   TouchableOpacity,
   Text,
   ImageBackground,
+  Platform,
 } from "react-native";
 import photo from "../assets/images/photo_bg.png";
 
 const RegistrationScreen = () => {
   const [login, setLogin] = useState("");
-  const [activeLogin, setActiveLogin] = useState(false);
+  const [isActiveLogin, setIsActiveLogin] = useState(false);
   const [email, setEmail] = useState("");
-  const [activeEmail, setActiveEmail] = useState(false);
+  const [isActiveEmail, setIsActiveEmail] = useState(false);
   const [password, setPassword] = useState("");
-  const [activePassword, setActivePassword] = useState(false);
+  const [isActivePassword, setIsActivePassword] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
 
@@ -36,7 +38,7 @@ const RegistrationScreen = () => {
       alert("Введите все данные");
       return;
     }
-    console.log(`Логин ${login}, почта ${email}, пароль ${password}`);
+    console.log({ login, email, password });
     reset();
   };
 
@@ -52,72 +54,92 @@ const RegistrationScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground source={photo} style={styles.background}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        setShowKeyboard(false);
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <ImageBackground source={photo} style={styles.background}>
           <View style={styles.form}>
-            {/* <KeyboardAvoidingView // определяем ОС и настраиваем поведение клавиатуры
-          behavior="padding"
-        > */}
-            <Text style={styles.title}>Регистрация</Text>
-            <TextInput
-              placeholder="Логин"
-              value={login}
-              onChangeText={loginHandler}
-              placeholderTextColor="#BDBDBD"
-              selectionColor="#212121"
-              onBlur={() => setActiveLogin(false)}
-              onFocus={() => setActiveLogin(true)}
-              style={activeLogin ? styles.activeInput : styles.input}
-            />
-            <TextInput
-              placeholder="Адрес электронной почты"
-              value={email}
-              onChangeText={emailHandler}
-              placeholderTextColor="#BDBDBD"
-              selectionColor="#212121"
-              onBlur={() => setActiveEmail(false)}
-              onFocus={() => setActiveEmail(true)}
-              style={activeEmail ? styles.activeInput : styles.input}
-            />
-            <View style={styles.lastInput}>
+            <KeyboardAvoidingView // определяем ОС и настраиваем поведение клавиатуры
+              behavior={Platform.OS == "ios" ? "padding" : "height"}
+            >
+              <Text style={styles.title}>Регистрация</Text>
               <TextInput
-                placeholder="Пароль"
-                value={password}
-                onChangeText={passwordHandler}
+                placeholder="Логин"
+                value={login}
+                onChangeText={loginHandler}
                 placeholderTextColor="#BDBDBD"
                 selectionColor="#212121"
-                secureTextEntry={secure}
-                onBlur={() => setActivePassword(false)}
-                onFocus={() => setActivePassword(true)}
-                style={activePassword ? styles.activeInput : styles.input}
+                onBlur={() => {
+                  setIsActiveLogin(false);
+                }}
+                onFocus={() => {
+                  setIsActiveLogin(true);
+                  setShowKeyboard(true);
+                }}
+                style={isActiveLogin ? styles.activeInput : styles.input}
               />
+              <TextInput
+                placeholder="Адрес электронной почты"
+                value={email}
+                onChangeText={emailHandler}
+                placeholderTextColor="#BDBDBD"
+                selectionColor="#212121"
+                onBlur={() => {
+                  setIsActiveEmail(false);
+                }}
+                onFocus={() => {
+                  setIsActiveEmail(true);
+                  setShowKeyboard(true);
+                }}
+                style={isActiveEmail ? styles.activeInput : styles.input}
+              />
+              <View style={styles.lastInput}>
+                <TextInput
+                  placeholder="Пароль"
+                  value={password}
+                  onChangeText={passwordHandler}
+                  placeholderTextColor="#BDBDBD"
+                  selectionColor="#212121"
+                  secureTextEntry={secure}
+                  onBlur={() => {
+                    setIsActivePassword(false);
+                  }}
+                  onFocus={() => {
+                    setIsActivePassword(true);
+                    setShowKeyboard(true);
+                  }}
+                  style={isActivePassword ? styles.activeInput : styles.input}
+                />
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={showPassword}
+                  style={styles.lastInputBtn}
+                >
+                  <Text style={styles.lastInputText}>{secureText}</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={showPassword}
-                style={styles.lastInputBtn}
+                style={styles.btn}
+                onPress={registerHandler}
               >
-                <Text style={styles.lastInputText}>{secureText}</Text>
+                <Text style={styles.btnTitle}>Зарегистрироваться</Text>
               </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.btn}
-              onPress={registerHandler}
-            >
-              <Text style={styles.btnTitle}>Зарегистрироваться</Text>
-            </TouchableOpacity>
-            <View style={styles.wrapper}>
-              <Text style={styles.link}>Уже есть аккаунт? </Text>
-              <TouchableOpacity activeOpacity={0.8}>
-                <Text style={styles.link}>Войти</Text>
-              </TouchableOpacity>
-            </View>
-            {/* </KeyboardAvoidingView> */}
+              <View style={styles.wrapper}>
+                <Text style={styles.link}>Уже есть аккаунт? </Text>
+                <TouchableOpacity activeOpacity={0.8}>
+                  <Text style={styles.link}>Войти</Text>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
           </View>
-        </TouchableWithoutFeedback>
-      </ImageBackground>
-    </View>
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -134,18 +156,19 @@ const styles = StyleSheet.create({
     // alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+
     paddingTop: 92,
     paddingHorizontal: 16,
     paddingBottom: 78,
-    borderTopStartRadius: 25,
-    borderTopEndRadius: 25,
   },
   title: {
     textAlign: "center",
-    // fontWeight: 500,
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
     lineHeight: 35,
-    // letterSpacing: "0.01em",
+    letterSpacing: 0.01,
     color: "#212121",
 
     marginBottom: 33,
@@ -174,7 +197,7 @@ const styles = StyleSheet.create({
   },
   lastInput: {
     position: "relative",
-    marginBottom: 43,
+    marginBottom: 27,
   },
   lastInputBtn: {
     position: "absolute",
@@ -194,6 +217,7 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     textAlign: "center",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#FFF",
@@ -205,6 +229,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   link: {
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
