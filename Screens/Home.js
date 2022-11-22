@@ -34,7 +34,7 @@ const Home = ({ navigation }) => {
           title: "Публикации",
           headerTitleAlign: "center",
           headerStyle: {
-            borderBottomWidth: 1,
+            borderBottomWidth: 0.5,
             borderBottomColor: "rgba(0, 0, 0, 0.3)",
           },
           headerTintColor: "#fff",
@@ -78,7 +78,7 @@ const Home = ({ navigation }) => {
           headerLeft: () => (
             <AntDesign
               name="arrowleft"
-              style={{ marginLeft: 21 }}
+              style={{ marginLeft: 20 }}
               size={24}
               color="black"
               onPress={() => {
