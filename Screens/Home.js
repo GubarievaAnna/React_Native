@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View, Text } from "react-native";
-import PostsScreen from "./Home/PostsScreen";
-import CreatePostsScreen from "./Home/CreatePostsScreen";
-import ProfileScreen from "./Home/ProfileScreen";
+import PostsScreen from "./MainScreens/PostsScreen";
+import CreatePostsScreen from "./MainScreens/CreatePostsScreen";
+import ProfileScreen from "./MainScreens/ProfileScreen";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 import { Feather } from "@expo/vector-icons";
@@ -31,27 +31,7 @@ const Home = ({ navigation }) => {
               color="rgba(33, 33, 33, 0.8)"
             />
           ),
-          title: "Публикации",
-          headerTitleAlign: "center",
-          headerStyle: {
-            borderBottomWidth: 0.5,
-            borderBottomColor: "rgba(0, 0, 0, 0.3)",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
-            fontSize: 17,
-            color: "#212121",
-          },
-          headerRight: () => (
-            <Ionicons
-              name="exit-outline"
-              style={{ marginRight: 21 }}
-              size={24}
-              color="rgba(33, 33, 33, 0.8)"
-              onPress={() => setIsAuth(false)}
-            />
-          ),
+          headerShown: false,
         }}
         name="Posts"
         component={PostsScreen}

@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-const PostsScreen = () => {
+const DefaultScreenPosts = () => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>PostsScreen</Text>
+      <Text>DefaultScreenPosts</Text>
     </View>
   );
 };
 
-export default PostsScreen;
+export default DefaultScreenPosts;
