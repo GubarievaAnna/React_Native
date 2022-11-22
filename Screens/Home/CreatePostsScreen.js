@@ -5,21 +5,34 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  TextInput,
 } from "react-native";
 import { Camera } from "expo-camera";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { EvilIcons } from "@expo/vector-icons";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState();
+  const [title, setTitle] = useState("");
+  const [place, setPlace] = useState("");
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
   };
 
+  const titleHandler = (text) => setTitle(text);
+  const placeHandler = (text) => setPlace(text);
+  const reset = () => {
+    setPhoto(null);
+    setTitle("");
+    setPlace("");
+  };
+
   const publishPost = () => {
     navigation.navigate("Posts");
+    reset();
   };
 
   return (
@@ -59,17 +72,53 @@ const CreatePostsScreen = ({ navigation }) => {
       >
         {!photo ? "Загрузите фото" : "Редактировать фото"}
       </Text>
+      <TextInput
+        placeholder="Название..."
+        value={title}
+        onChangeText={titleHandler}
+        placeholderTextColor="#BDBDBD"
+        selectionColor="#212121"
+        style={styles.input}
+      />
+      <View
+        style={{
+          ...styles.input,
+          marginBottom: 32,
+          paddingLeft: 28,
+          position: "relative",
+        }}
+      >
+        <EvilIcons
+          name="location"
+          size={24}
+          color="#BDBDBD"
+          style={styles.iconLocation}
+        />
+        <TextInput
+          placeholder="Местность..."
+          value={place}
+          onChangeText={placeHandler}
+          placeholderTextColor="#BDBDBD"
+          selectionColor="#212121"
+        />
+      </View>
+
       <TouchableOpacity
         onPress={publishPost}
         activeOpacity={0.8}
         style={{
           ...styles.btn,
-          backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
+          backgroundColor: "#FF6C00",
+          // backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
         }}
-        disabled={!photo ? true : false}
+        // disabled={!photo ? true : false}
       >
         <Text
-          style={{ ...styles.btnTitle, color: !photo ? "#BDBDBD" : "#FFF" }}
+          style={{
+            ...styles.btnTitle,
+            color: "#fff",
+            // color: !photo ? "#BDBDBD" : "#FFF"
+          }}
         >
           Опубликовать
         </Text>
@@ -126,6 +175,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
   },
+  input: {
+    position: "relative",
+    height: 50,
+    color: "#212121",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
+    paddingVertical: 16,
+    marginBottom: 16,
+  },
+  iconLocation: { position: "absolute", left: 0, top: 13 },
 });
 
 export default CreatePostsScreen;

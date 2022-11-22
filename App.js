@@ -6,6 +6,7 @@ import AppLoading from "expo-app-loading";
 import { AuthContext } from "./hooks/useAuthContext";
 import RobotoRegular from "./assets/fonts/Roboto-Regular.ttf";
 import RobotoMedium from "./assets/fonts/Roboto-Medium.ttf";
+import RobotoBold from "./assets/fonts/Roboto-Bold.ttf";
 import RegistrationScreen from "./Screens/Auth/RegistrationScreen";
 import LoginScreen from "./Screens/Auth/LoginScreen";
 import Home from "./Screens/Home";
@@ -16,6 +17,7 @@ const loadFonts = async () => {
   await Font.loadAsync({
     "Roboto-Regular": RobotoRegular,
     "Roboto-Medium": RobotoMedium,
+    "Roboto-Bold": RobotoBold,
   });
 };
 
