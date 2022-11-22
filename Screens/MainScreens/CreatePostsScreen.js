@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ImageBackground,
@@ -8,19 +8,31 @@ import {
   TextInput,
 } from "react-native";
 import { Camera } from "expo-camera";
+import * as Location from "expo-location";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import plug from "../../assets/images/photo_bg.png";
+import { usePostsContext } from "../../hooks/usePostsContext";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState();
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
+  const [location, setLocation] = useState(null);
+  const { posts, setPosts } = usePostsContext();
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
   };
+
+  useEffect(() => {
+    (async () => {
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location.coords);
+    })();
+  }, []);
 
   const titleHandler = (text) => setTitle(text);
   const placeHandler = (text) => setPlace(text);
@@ -31,6 +43,7 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const publishPost = () => {
+    setPosts([...posts, { photo: plug, title, place, location, comments: [] }]);
     navigation.navigate("Posts");
     reset();
   };
