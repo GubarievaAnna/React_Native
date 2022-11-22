@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import PostsScreen from "./Home/PostsScreen";
 import CreatePostsScreen from "./Home/CreatePostsScreen";
 import ProfileScreen from "./Home/ProfileScreen";
@@ -32,13 +32,13 @@ const Home = ({ navigation }) => {
             />
           ),
           title: "Публикации",
+          headerTitleAlign: "center",
           headerStyle: {
             borderBottomWidth: 1,
             borderBottomColor: "rgba(0, 0, 0, 0.3)",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
-            marginLeft: "50%",
             fontFamily: "Roboto-Medium",
             fontSize: 17,
             color: "#212121",
@@ -64,14 +64,13 @@ const Home = ({ navigation }) => {
             </View>
           ),
           title: "Создать публикацию",
+          headerTitleAlign: "center",
           headerStyle: {
             borderBottomWidth: 1,
             borderBottomColor: "rgba(0, 0, 0, 0.3)",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
-            marginLeft: 30,
-            textAlign: "center",
             fontFamily: "Roboto-Medium",
             fontSize: 17,
             color: "#212121",
