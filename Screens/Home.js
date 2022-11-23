@@ -41,6 +41,8 @@ const Home = ({ navigation }) => {
           name="Create"
           component={CreatePostsScreen}
           options={{
+            tabBarHideOnKeyboard: true,
+            tabBarVisible: false,
             tabBarIcon: ({ focused, size, color }) => (
               <View style={styles.iconAdd}>
                 <Ionicons name="add" size={24} color="#fff" />

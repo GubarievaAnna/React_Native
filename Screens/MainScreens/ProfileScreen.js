@@ -20,16 +20,20 @@ const ProfileScreen = ({ navigation }) => {
   const { posts } = usePostsContext();
   const [photo, setPhoto] = useState(authInfo.photo);
 
-  const loadPhoto = () => {
-    DocumentPicker.pick({
-      type: "allFiles",
-      allowMultiSelection: false,
-    })
-      .then((res) => {
-        setPhoto(res);
-        setAuthInfo({ ...authInfo, photo: res });
-      })
-      .catch((error) => console.log(error));
+  const loadPhoto = async () => {
+    try {
+      const res = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.allFiles],
+      });
+      setPhoto(res);
+      setAuthInfo({ ...authInfo, photo: res });
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log("error -----", err);
+      } else {
+        console.log("DocumentPicker error", err);
+      }
+    }
   };
 
   const deletePhoto = () => {
@@ -85,6 +89,16 @@ const ProfileScreen = ({ navigation }) => {
     </View>
   );
 };
+
+// DocumentPicker.pick({
+//   type: "allFiles",
+//   allowMultiSelection: false,
+// })
+//   .then((res) => {
+// setPhoto(res);
+// setAuthInfo({ ...authInfo, photo: res });
+//   })
+//   .catch((error) => console.log(error));
 
 const styles = StyleSheet.create({
   container: {

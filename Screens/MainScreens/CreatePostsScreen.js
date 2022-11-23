@@ -11,6 +11,7 @@ import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { usePostsContext } from "../../hooks/usePostsContext";
 
 const CreatePostsScreen = ({ navigation }) => {
@@ -141,6 +142,15 @@ const CreatePostsScreen = ({ navigation }) => {
           Опубликовать
         </Text>
       </TouchableOpacity>
+      <View style={{ width: "100%", alignItems: "center" }}>
+        <TouchableOpacity
+          style={styles.btnDelete}
+          activeOpacity={0.6}
+          onPress={reset}
+        >
+          <AntDesign name="delete" size={24} color="#BDBDBD" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -192,6 +202,14 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
+  },
+  btnDelete: {
+    width: 70,
+    height: 40,
+    backgroundColor: "#F6F6F6",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
   },
   input: {
     position: "relative",
