@@ -27,7 +27,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
   const [photo, setPhoto] = useState(photoplug);
-  const { setIsAuth } = useAuthContext();
+  const { setIsAuth, setAuthInfo } = useAuthContext();
 
   const loginHandler = (text) => setLogin(text);
   const emailHandler = (text) => setEmail(text);
@@ -44,6 +44,7 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
     console.log({ login, email, password });
+    setAuthInfo({ login, email, password });
     setIsAuth(true);
     reset();
   };

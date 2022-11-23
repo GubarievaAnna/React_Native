@@ -8,7 +8,6 @@ import { FontAwesome } from "@expo/vector-icons";
 const Item = ({ item, navigation }) => {
   const { photo, title, place, location, comments } = item;
   const route = useRoute();
-  console.log(route.name);
 
   return (
     <View style={styles.container}>
@@ -17,7 +16,7 @@ const Item = ({ item, navigation }) => {
       <View
         style={{
           ...styles.iconsContainer,
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
         }}
       >
         <View style={styles.iconsContainer}>
@@ -36,12 +35,12 @@ const Item = ({ item, navigation }) => {
           <Text style={styles.commentsText}>{comments.length}</Text>
         </View>
         {route.name === "Profile" && (
-          <View style={styles.iconsContainer}>
+          <View style={{ ...styles.iconsContainer, marginLeft: 24 }}>
             <AntDesign name="like2" size={24} color="#FF6C00" />
             <Text style={styles.commentsText}>0</Text>
           </View>
         )}
-        <View style={styles.iconsContainer}>
+        <View style={{ ...styles.iconsContainer, marginLeft: "auto" }}>
           <EvilIcons
             name="location"
             size={24}

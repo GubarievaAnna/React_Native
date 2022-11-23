@@ -24,6 +24,7 @@ const loadFonts = async () => {
 const App = () => {
   const [isReady, setIsReady] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [authInfo, setAuthInfo] = useState(null);
 
   if (!isReady) {
     return (
@@ -36,7 +37,7 @@ const App = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ setIsAuth }}>
+    <AuthContext.Provider value={{ setIsAuth, authInfo, setAuthInfo }}>
       <NavigationContainer>
         <MainStack.Navigator screenOptions={{ headerShown: false }}>
           {!isAuth ? (

@@ -17,7 +17,7 @@ import Item from "../../components/Item";
 
 const ProfileScreen = ({ navigation }) => {
   const [photo, setPhoto] = useState(photoplug);
-  const { setIsAuth } = useAuthContext();
+  const { setIsAuth, authInfo } = useAuthContext();
   const { posts } = usePostsContext();
 
   return (
@@ -55,7 +55,7 @@ const ProfileScreen = ({ navigation }) => {
             color="#BDBDBD"
             onPress={() => setIsAuth(false)}
           />
-          <Text style={styles.name}>Natali Romanova</Text>
+          <Text style={styles.name}>{authInfo.login}</Text>
           <FlatList
             data={posts}
             keyExtractor={(item, index) => index.toString()}

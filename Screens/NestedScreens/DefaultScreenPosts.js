@@ -1,19 +1,21 @@
 import React from "react";
 import { View, FlatList, Image, Text, StyleSheet } from "react-native";
 import { usePostsContext } from "../../hooks/usePostsContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import Item from "../../components/Item";
 import photo from "../../assets/images/photo_bg.png";
 
 const DefaultScreenPosts = ({ navigation }) => {
   const { posts } = usePostsContext();
+  const { authInfo } = useAuthContext();
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
         <Image source={photo} style={styles.img} />
         <View style={styles.textContainer}>
-          <Text style={styles.textName}>Natali Romanova</Text>
-          <Text style={styles.textEmail}>email@example.com</Text>
+          <Text style={styles.textName}>{authInfo.login}</Text>
+          <Text style={styles.textEmail}>{authInfo.email}</Text>
         </View>
       </View>
       <FlatList

@@ -28,11 +28,12 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    (async () => {
-      let location = await Location.getCurrentPositionAsync({});
-      console.log("useEffect", location);
-      setLocation(location.coords);
-    })();
+    Location.getCurrentPositionAsync({})
+      .then((location) => {
+        console.log("useEffect", location);
+        setLocation(location.coords);
+      })
+      .catch((error) => console.log(error));
   }, []);
 
   const titleHandler = (text) => setTitle(text);
@@ -43,8 +44,7 @@ const CreatePostsScreen = ({ navigation }) => {
     setPlace("");
   };
 
-  const publishPost = () => {
-    console.log("send", location);
+  const publishPost = async () => {
     setPosts([...posts, { photo: plug, title, place, location, comments: [] }]);
     navigation.navigate("Posts");
     reset();

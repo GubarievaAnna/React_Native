@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
-  const { setIsAuth } = useAuthContext();
+  const { setIsAuth, setAuthInfo } = useAuthContext();
 
   const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
@@ -36,6 +36,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     console.log({ email, password });
+    setAuthInfo({ login: "Natali Romanova", email, password });
     setIsAuth(true);
     reset();
   };
