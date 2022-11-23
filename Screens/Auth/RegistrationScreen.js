@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
   Text,
   ImageBackground,
+  Image,
   Platform,
 } from "react-native";
-import photo from "../../assets/images/photo_bg.png";
+import { AntDesign } from "@expo/vector-icons";
+import background from "../../assets/images/photo_bg.png";
+import photoplug from "../../assets/images/photo_bg.png";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 const RegistrationScreen = ({ navigation }) => {
@@ -23,6 +26,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
+  const [photo, setPhoto] = useState(photoplug);
   const { setIsAuth } = useAuthContext();
 
   const loginHandler = (text) => setLogin(text);
@@ -63,13 +67,37 @@ const RegistrationScreen = ({ navigation }) => {
       }}
     >
       <View style={styles.container}>
-        <ImageBackground source={photo} style={styles.background}>
+        <ImageBackground source={background} style={styles.background}>
           <View
             style={{
               ...styles.form,
               paddingBottom: Platform.OS == "android" && showKeyboard ? 0 : 78,
             }}
           >
+            <View style={styles.photoBlock}>
+              {photo ? (
+                <>
+                  <Image source={photo} style={styles.img} />
+                  <AntDesign
+                    name="closecircleo"
+                    size={24}
+                    color="#BDBDBD"
+                    style={styles.btnLoad}
+                    onPress={() => setPhoto(null)}
+                  />
+                </>
+              ) : (
+                <View style={styles.img}>
+                  <AntDesign
+                    name="pluscircleo"
+                    size={24}
+                    color="#FF6C00"
+                    onPress={() => setPhoto(photoplug)}
+                    style={styles.btnLoad}
+                  />
+                </View>
+              )}
+            </View>
             <Text style={styles.title}>Регистрация</Text>
             <TextInput
               placeholder="Логин"
@@ -262,6 +290,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
+  },
+  photoBlock: {
+    position: "absolute",
+    top: -60,
+    left: "36%",
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: "#F6F6F6",
+  },
+  img: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+  },
+  btnLoad: {
+    position: "absolute",
+    right: -12,
+    bottom: 18,
   },
 });
 

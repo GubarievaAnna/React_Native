@@ -30,6 +30,7 @@ const CreatePostsScreen = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       let location = await Location.getCurrentPositionAsync({});
+      console.log("useEffect", location);
       setLocation(location.coords);
     })();
   }, []);
@@ -43,6 +44,7 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const publishPost = () => {
+    console.log("send", location);
     setPosts([...posts, { photo: plug, title, place, location, comments: [] }]);
     navigation.navigate("Posts");
     reset();

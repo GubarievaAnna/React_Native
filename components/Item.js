@@ -1,9 +1,14 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Item = ({ item, navigation }) => {
   const { photo, title, place, location, comments } = item;
+  const route = useRoute();
+  console.log(route.name);
 
   return (
     <View style={styles.container}>
@@ -16,16 +21,26 @@ const Item = ({ item, navigation }) => {
         }}
       >
         <View style={styles.iconsContainer}>
-          <EvilIcons
-            name="comment"
-            size={24}
-            color="#BDBDBD"
-            onPress={() => {
-              navigation.navigate("Comments");
-            }}
-          />
+          {route.name === "Profile" ? (
+            <FontAwesome name="comment" size={24} color="#FF6C00" />
+          ) : (
+            <EvilIcons
+              name="comment"
+              size={24}
+              color="#BDBDBD"
+              onPress={() => {
+                navigation.navigate("Comments");
+              }}
+            />
+          )}
           <Text style={styles.commentsText}>{comments.length}</Text>
         </View>
+        {route.name === "Profile" && (
+          <View style={styles.iconsContainer}>
+            <AntDesign name="like2" size={24} color="#FF6C00" />
+            <Text style={styles.commentsText}>0</Text>
+          </View>
+        )}
         <View style={styles.iconsContainer}>
           <EvilIcons
             name="location"

@@ -1,12 +1,120 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  FlatList,
+  Text,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { usePostsContext } from "../../hooks/usePostsContext";
+import photoplug from "../../assets/images/photo_bg.png";
+import background from "../../assets/images/photo_bg.png";
+import Item from "../../components/Item";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
+  const [photo, setPhoto] = useState(photoplug);
+  const { setIsAuth } = useAuthContext();
+  const { posts } = usePostsContext();
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>ProfileScreen</Text>
+    <View style={styles.container}>
+      <ImageBackground source={background} style={styles.background}>
+        <View style={styles.block}>
+          <View style={styles.photoBlock}>
+            {photo ? (
+              <>
+                <Image source={photo} style={styles.img} />
+                <AntDesign
+                  name="closecircleo"
+                  size={24}
+                  color="#BDBDBD"
+                  style={styles.btn}
+                  onPress={() => setPhoto(null)}
+                />
+              </>
+            ) : (
+              <View style={styles.img}>
+                <AntDesign
+                  name="pluscircleo"
+                  size={24}
+                  color="#FF6C00"
+                  onPress={() => setPhoto(photoplug)}
+                  style={styles.btn}
+                />
+              </View>
+            )}
+          </View>
+          <Ionicons
+            name="exit-outline"
+            style={styles.iconExit}
+            size={24}
+            color="#BDBDBD"
+            onPress={() => setIsAuth(false)}
+          />
+          <Text style={styles.name}>Natali Romanova</Text>
+          <FlatList
+            data={posts}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <Item item={item} navigation={navigation} />
+            )}
+          />
+        </View>
+      </ImageBackground>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  background: { flex: 1 },
+  block: {
+    position: "relative",
+    flex: 1,
+    width: "100%",
+    // alignItems: "center",
+    backgroundColor: "#fff",
+    paddingTop: 92,
+    paddingHorizontal: 16,
+    marginTop: 103,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+  },
+  photoBlock: {
+    position: "absolute",
+    top: -60,
+    left: "36%",
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: "#F6F6F6",
+  },
+  img: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+  },
+  btn: {
+    position: "absolute",
+    right: -12,
+    bottom: 18,
+  },
+  iconExit: { position: "absolute", top: 22, right: 16 },
+  name: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 30,
+    lineHeight: 35,
+    letterSpacing: 0.01,
+    textAlign: "center",
+    color: "#212121",
+    marginBottom: 32,
+  },
+});
 
 export default ProfileScreen;
