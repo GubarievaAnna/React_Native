@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DocumentPicker from "react-native-document-picker";
 import {
   View,
   StyleSheet,
@@ -11,14 +12,30 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { usePostsContext } from "../../hooks/usePostsContext";
-import photoplug from "../../assets/images/photo_bg.png";
 import background from "../../assets/images/photo_bg.png";
 import Item from "../../components/Item";
 
 const ProfileScreen = ({ navigation }) => {
-  const [photo, setPhoto] = useState(photoplug);
-  const { setIsAuth, authInfo } = useAuthContext();
+  const { setIsAuth, authInfo, setAuthInfo } = useAuthContext();
   const { posts } = usePostsContext();
+  const [photo, setPhoto] = useState(authInfo.photo);
+
+  const loadPhoto = () => {
+    DocumentPicker.pick({
+      type: "allFiles",
+      allowMultiSelection: false,
+    })
+      .then((res) => {
+        setPhoto(res);
+        setAuthInfo({ ...authInfo, photo: res });
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const deletePhoto = () => {
+    setPhoto(null);
+    setAuthInfo({ ...authInfo, photo: null });
+  };
 
   return (
     <View style={styles.container}>
@@ -33,7 +50,7 @@ const ProfileScreen = ({ navigation }) => {
                   size={24}
                   color="#BDBDBD"
                   style={styles.btn}
-                  onPress={() => setPhoto(null)}
+                  onPress={deletePhoto}
                 />
               </>
             ) : (
@@ -42,7 +59,7 @@ const ProfileScreen = ({ navigation }) => {
                   name="pluscircleo"
                   size={24}
                   color="#FF6C00"
-                  onPress={() => setPhoto(photoplug)}
+                  onPress={loadPhoto}
                   style={styles.btn}
                 />
               </View>

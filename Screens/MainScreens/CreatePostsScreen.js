@@ -11,7 +11,6 @@ import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
-import plug from "../../assets/images/photo_bg.png";
 import { usePostsContext } from "../../hooks/usePostsContext";
 
 const CreatePostsScreen = ({ navigation }) => {
@@ -45,7 +44,11 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const publishPost = async () => {
-    setPosts([...posts, { photo: plug, title, place, location, comments: [] }]);
+    if (!title || !place) {
+      alert("Введите название и метность");
+      return;
+    }
+    setPosts([...posts, { photo, title, place, location, comments: [] }]);
     navigation.navigate("Posts");
     reset();
   };
@@ -124,15 +127,15 @@ const CreatePostsScreen = ({ navigation }) => {
         style={{
           ...styles.btn,
           backgroundColor: "#FF6C00",
-          // backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
+          backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
         }}
-        // disabled={!photo ? true : false}
+        disabled={!photo ? true : false}
       >
         <Text
           style={{
             ...styles.btnTitle,
             color: "#fff",
-            // color: !photo ? "#BDBDBD" : "#FFF"
+            color: !photo ? "#BDBDBD" : "#FFF",
           }}
         >
           Опубликовать

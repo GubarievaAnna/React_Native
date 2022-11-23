@@ -36,7 +36,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     console.log({ email, password });
-    setAuthInfo({ login: "Natali Romanova", email, password });
+    setAuthInfo({ login: "unknown", photo: null, email, password });
     setIsAuth(true);
     reset();
   };

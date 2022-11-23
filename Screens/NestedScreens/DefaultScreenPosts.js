@@ -12,7 +12,11 @@ const DefaultScreenPosts = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <Image source={photo} style={styles.img} />
+        {authInfo.photo ? (
+          <Image source={authInfo.photo} style={styles.img} />
+        ) : (
+          <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
+        )}
         <View style={styles.textContainer}>
           <Text style={styles.textName}>{authInfo.login}</Text>
           <Text style={styles.textEmail}>{authInfo.email}</Text>

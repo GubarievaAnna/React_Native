@@ -11,9 +11,9 @@ import {
   Image,
   Platform,
 } from "react-native";
+import DocumentPicker from "react-native-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import background from "../../assets/images/photo_bg.png";
-import photoplug from "../../assets/images/photo_bg.png";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 const RegistrationScreen = ({ navigation }) => {
@@ -26,7 +26,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
-  const [photo, setPhoto] = useState(photoplug);
+  const [photo, setPhoto] = useState(null);
   const { setIsAuth, setAuthInfo } = useAuthContext();
 
   const loginHandler = (text) => setLogin(text);
@@ -44,7 +44,7 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
     console.log({ login, email, password });
-    setAuthInfo({ login, email, password });
+    setAuthInfo({ login, email, password, photo });
     setIsAuth(true);
     reset();
   };
@@ -58,6 +58,21 @@ const RegistrationScreen = ({ navigation }) => {
     }
     setSecure(true);
     setSecureText("Показать");
+  };
+
+  const loadPhoto = () => {
+    DocumentPicker.pick({
+      type: "allFiles",
+      allowMultiSelection: false,
+    })
+      .then((res) => {
+        setPhoto(res);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const deletePhoto = () => {
+    setPhoto(null);
   };
 
   return (
@@ -84,7 +99,7 @@ const RegistrationScreen = ({ navigation }) => {
                     size={24}
                     color="#BDBDBD"
                     style={styles.btnLoad}
-                    onPress={() => setPhoto(null)}
+                    onPress={deletePhoto}
                   />
                 </>
               ) : (
@@ -93,7 +108,7 @@ const RegistrationScreen = ({ navigation }) => {
                     name="pluscircleo"
                     size={24}
                     color="#FF6C00"
-                    onPress={() => setPhoto(photoplug)}
+                    onPress={loadPhoto}
                     style={styles.btnLoad}
                   />
                 </View>

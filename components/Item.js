@@ -11,7 +11,7 @@ const Item = ({ item, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={photo} style={styles.img} />
+      <Image source={{ uri: photo }} style={styles.img} />
       <Text style={styles.title}>{title}</Text>
       <View
         style={{
