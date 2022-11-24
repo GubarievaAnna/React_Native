@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import { View, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
 import { AntDesign } from '@expo/vector-icons'; 
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { usePostsContext } from "../../hooks/usePostsContext";
 
 const CommentsScreen = ({route}) => {
