@@ -11,7 +11,7 @@ const Item = ({ item, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: photo }} style={styles.img} />
+      <Image source={photo} style={styles.img} />
       <Text style={styles.title}>{title}</Text>
       <View
         style={{
@@ -28,7 +28,7 @@ const Item = ({ item, navigation }) => {
               size={24}
               color="#BDBDBD"
               onPress={() => {
-                navigation.navigate("Comments");
+                navigation.navigate("Comments", {photo, title, comments});
               }}
             />
           )}

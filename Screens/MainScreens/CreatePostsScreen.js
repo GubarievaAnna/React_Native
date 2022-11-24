@@ -13,10 +13,11 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { usePostsContext } from "../../hooks/usePostsContext";
+import plug from "../../assets/images/photo_bg.png";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
-  const [photo, setPhoto] = useState();
+  const [photo, setPhoto] = useState(plug);
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
@@ -28,12 +29,18 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    Location.getCurrentPositionAsync({})
-      .then((location) => {
-        console.log("useEffect", location);
-        setLocation(location.coords);
-      })
-      .catch((error) => console.log(error));
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      console.log("useEffect", location);
+      setLocation(location.coords);
+    })();
   }, []);
 
   const titleHandler = (text) => setTitle(text);
@@ -69,7 +76,7 @@ const CreatePostsScreen = ({ navigation }) => {
           </Camera>
         )}
         {photo && (
-          <ImageBackground source={{ uri: photo }} style={styles.background}>
+          <ImageBackground source={photo} style={styles.background}>
             <TouchableOpacity
               onPress={() => setPhoto(null)}
               style={{
