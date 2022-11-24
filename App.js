@@ -3,13 +3,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
-import { AuthContext } from "./hooks/useAuthContext";
-import RobotoRegular from "./assets/fonts/Roboto-Regular.ttf";
-import RobotoMedium from "./assets/fonts/Roboto-Medium.ttf";
-import RobotoBold from "./assets/fonts/Roboto-Bold.ttf";
-import RegistrationScreen from "./Screens/Auth/RegistrationScreen";
-import LoginScreen from "./Screens/Auth/LoginScreen";
-import Home from "./Screens/Home";
+import { AuthContext } from "./src/hooks/useAuthContext";
+import RobotoRegular from "./src/assets/fonts/Roboto-Regular.ttf";
+import RobotoMedium from "./src/assets/fonts/Roboto-Medium.ttf";
+import RobotoBold from "./src/assets/fonts/Roboto-Bold.ttf";
+import RegistrationScreen from "./src/Screens/Auth/RegistrationScreen";
+import LoginScreen from "./src/Screens/Auth/LoginScreen";
+import Home from "./src/Screens/Home";
 
 const MainStack = createStackNavigator();
 
