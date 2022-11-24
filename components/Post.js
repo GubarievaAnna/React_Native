@@ -5,13 +5,13 @@ import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
-const Item = ({ item, navigation }) => {
+const Post = ({ item, navigation }) => {
   const { photo, title, place, location, comments } = item;
   const route = useRoute();
 
   return (
     <View style={styles.container}>
-      <Image source={photo} style={styles.img} />
+      <Image source={{uri:photo}} style={styles.img} />
       <Text style={styles.title}>{title}</Text>
       <View
         style={{
@@ -21,14 +21,21 @@ const Item = ({ item, navigation }) => {
       >
         <View style={styles.iconsContainer}>
           {route.name === "Profile" ? (
-            <FontAwesome name="comment" size={24} color="#FF6C00" />
+            <FontAwesome
+              name="comment"
+              size={24}
+              color="#FF6C00"
+              onPress={() => {
+                navigation.navigate("Comments", { photo, title, comments });
+              }}
+            />
           ) : (
             <EvilIcons
               name="comment"
               size={24}
               color="#BDBDBD"
               onPress={() => {
-                navigation.navigate("Comments", {photo, title, comments});
+                navigation.navigate("Comments", { photo, title, comments });
               }}
             />
           )}
@@ -94,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Item;
+export default Post;

@@ -13,11 +13,11 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { usePostsContext } from "../../hooks/usePostsContext";
-import plug from "../../assets/images/photo_bg.png";
+// import plug from "../../assets/images/photo_bg.png";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
-  const [photo, setPhoto] = useState(plug);
+  const [photo, setPhoto] = useState(null);
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
@@ -76,7 +76,7 @@ const CreatePostsScreen = ({ navigation }) => {
           </Camera>
         )}
         {photo && (
-          <ImageBackground source={photo} style={styles.background}>
+          <ImageBackground source={{uri:photo}} style={styles.background}>
             <TouchableOpacity
               onPress={() => setPhoto(null)}
               style={{

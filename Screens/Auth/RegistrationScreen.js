@@ -26,7 +26,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState();
   const { setIsAuth, setAuthInfo } = useAuthContext();
 
   const loginHandler = (text) => setLogin(text);
@@ -60,16 +60,21 @@ const RegistrationScreen = ({ navigation }) => {
     setSecureText("Показать");
   };
 
-  const loadPhoto = () => {
-    DocumentPicker.pick({
-      type: "allFiles",
-      allowMultiSelection: false,
-    })
-      .then((res) => {
-        setPhoto(res);
-      })
-      .catch((error) => console.log(error));
+  const loadPhoto = async () => {
+    try {
+      const res = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.allFiles],
+      });
+      setPhoto(res.uri);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log("error -----", err);
+      } else {
+        console.log("DocumentPicker error", err);
+      }
+    }
   };
+
 
   const deletePhoto = () => {
     setPhoto(null);
@@ -93,7 +98,7 @@ const RegistrationScreen = ({ navigation }) => {
             <View style={styles.photoBlock}>
               {photo ? (
                 <>
-                  <Image source={photo} style={styles.img} />
+                  <Image source={{uri: photo}} style={styles.img} />
                   <AntDesign
                     name="closecircleo"
                     size={24}

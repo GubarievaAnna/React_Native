@@ -2,8 +2,7 @@ import React from "react";
 import { View, FlatList, Image, Text, StyleSheet } from "react-native";
 import { usePostsContext } from "../../hooks/usePostsContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import Item from "../../components/Item";
-import photo from "../../assets/images/photo_bg.png";
+import Post from "../../components/Post";
 
 const DefaultScreenPosts = ({ navigation }) => {
   const { posts } = usePostsContext();
@@ -13,7 +12,7 @@ const DefaultScreenPosts = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.infoContainer}>
         {authInfo.photo ? (
-          <Image source={authInfo.photo} style={styles.img} />
+          <Image source={{uri:authInfo.photo}} style={styles.img} />
         ) : (
           <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
         )}
@@ -25,7 +24,7 @@ const DefaultScreenPosts = ({ navigation }) => {
       <FlatList
         data={posts}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Item item={item} navigation={navigation} />}
+        renderItem={({ item }) => <Post item={item} navigation={navigation} />}
       />
     </View>
   );

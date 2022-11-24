@@ -13,7 +13,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { usePostsContext } from "../../hooks/usePostsContext";
 import background from "../../assets/images/photo_bg.png";
-import Item from "../../components/Item";
+import Post from "../../components/Post";
 
 const ProfileScreen = ({ navigation }) => {
   const { setIsAuth, authInfo, setAuthInfo } = useAuthContext();
@@ -25,7 +25,7 @@ const ProfileScreen = ({ navigation }) => {
       const res = await DocumentPicker.pickSingle({
         type: [DocumentPicker.types.allFiles],
       });
-      setPhoto(res);
+      setPhoto(res.uri);
       setAuthInfo({ ...authInfo, photo: res });
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -48,7 +48,7 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.photoBlock}>
             {photo ? (
               <>
-                <Image source={photo} style={styles.img} />
+                <Image source={{uri: photo}} style={styles.img} />
                 <AntDesign
                   name="closecircleo"
                   size={24}
@@ -81,7 +81,7 @@ const ProfileScreen = ({ navigation }) => {
             data={posts}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-              <Item item={item} navigation={navigation} />
+              <Post item={item} navigation={navigation} />
             )}
           />
         </View>
@@ -90,15 +90,6 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-// DocumentPicker.pick({
-//   type: "allFiles",
-//   allowMultiSelection: false,
-// })
-//   .then((res) => {
-// setPhoto(res);
-// setAuthInfo({ ...authInfo, photo: res });
-//   })
-//   .catch((error) => console.log(error));
 
 const styles = StyleSheet.create({
   container: {

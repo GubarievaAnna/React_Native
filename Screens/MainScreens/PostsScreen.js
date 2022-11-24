@@ -93,7 +93,7 @@ const PostsScreen = ({ navigation }) => {
               size={24}
               color="black"
               onPress={() => {
-                navigation.navigate("DefaultScreenPosts");
+                navigation.goBack()
               }}
             />
           ),

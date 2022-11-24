@@ -4,10 +4,14 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  TextInput,
   FlatList,
+  Text
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { usePostsContext } from "../../hooks/usePostsContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
   const { photo, title, comments } = route.params;
@@ -15,35 +19,35 @@ const CommentsScreen = ({ route }) => {
   const [comment, setComment] = useState();
   const [commentsRender, setCommentsRender] = useState(comments);
   const { posts, setPosts } = usePostsContext();
+  const { authInfo} = useAuthContext();
 
   const commentHandler = (text) => setComment(text);
 
   const addComment = () => {
-    const newArray = [...comments, comment];
+    const date = new Date();
+    const newCommentsArray = [...commentsRender, {comment, date, author: authInfo.photo}];
+    setComment("");
     const newPosts = posts.map(
       (item) =>
-        (item.comments = item.title === title ? newArray : item.comments)
+        ({...item, comments: item.title === title ? newCommentsArray : item.comments})
     );
     setPosts(newPosts);
-    setCommentsRender(newArray);
+    setCommentsRender(newCommentsArray);
   };
 
   return (
     <View style={styles.container}>
-      <Image source={photo} style={styles.img} />
+      <Image source={{uri:photo}} style={styles.img} />
       <FlatList
         data={commentsRender}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item}</Text>
-          </View>
+        renderItem={({ item }) => (<Comment item={item}/>
         )}
       />
       <View style={styles.blockInput}>
         <TextInput
-          placeholder="Комментарии"
-          value={title}
+          placeholder="Комментировать..."
+          value={comment}
           onChangeText={commentHandler}
           placeholderTextColor="#BDBDBD"
           selectionColor="#212121"
@@ -68,18 +72,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 32,
     paddingHorizontal: 16,
+    paddingBottom: 16,
   },
-  img: { width: "100%", height: 240, borderRadius: 8, marginBottom: 32 },
+  img: { width: "100%", height: 240, borderRadius: 8, marginBottom: 32},
   btnArrow: {
     position: "absolute",
-    right: 0,
+    top: 8,
+    right: 8,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#FF6C00",
     borderRadius: 50,
-    width: 50,
-    height: 50,
+    width: 34,
+    height: 34,
   },
-  blockInput: { width: "100%", position: "relative" },
-  input: { borderRadius: 8 },
+  blockInput: { width: "100%", position: "relative", height: 50 },
+  input: { borderRadius: 100, borderWidth: 1, borderColor: "#E8E8E8", padding: 16  },
 });
 
 export default CommentsScreen;
