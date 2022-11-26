@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   ImageBackground,
@@ -12,9 +13,11 @@ import * as Location from "expo-location";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import {db} from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { db, storage } from "../../firebase/config";
 import { usePostsContext } from "../../hooks/usePostsContext";
-
+import { getUserId } from "../../redux/auth/authSelectors";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -23,6 +26,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
   const { posts, setPosts } = usePostsContext();
+  const userId = useSelector(getUserId);
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
@@ -31,10 +35,9 @@ const CreatePostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
         return;
       }
 
@@ -57,6 +60,12 @@ const CreatePostsScreen = ({ navigation }) => {
       alert("Введите название и метность");
       return;
     }
+    await addDoc(collection(db, "posts"), {
+      title,
+      place,
+      location,
+      userId,
+    });
     setPosts([...posts, { photo, title, place, location, comments: [] }]);
     navigation.navigate("Posts");
     reset();
@@ -77,7 +86,7 @@ const CreatePostsScreen = ({ navigation }) => {
           </Camera>
         )}
         {photo && (
-          <ImageBackground source={{uri:photo}} style={styles.background}>
+          <ImageBackground source={{ uri: photo }} style={styles.background}>
             <TouchableOpacity
               onPress={() => setPhoto(null)}
               style={{
