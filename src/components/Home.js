@@ -5,9 +5,9 @@ import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
-import PostsScreen from "./MainScreens/PostsScreen";
-import CreatePostsScreen from "./MainScreens/CreatePostsScreen";
-import ProfileScreen from "./MainScreens/ProfileScreen";
+import PostsScreen from "../Screens/MainScreens/PostsScreen";
+import CreatePostsScreen from "../Screens/MainScreens/CreatePostsScreen";
+import ProfileScreen from "../Screens/MainScreens/ProfileScreen";
 import { PostsContext } from "../hooks/usePostsContext";
 
 const MainTab = createBottomTabNavigator();

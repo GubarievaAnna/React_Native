@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
   View,
@@ -10,8 +11,12 @@ import {
   Text,
   ImageBackground,
 } from "react-native";
+import {
+  loginUser,
+} from '../../redux/auth/authOperations';
 import photo from "../../assets/images/photo_bg.png";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import {getAuthError} from "../../redux/auth/authSelectors";
+import {changeError} from "../../redux/auth/authSlice";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -21,7 +26,16 @@ const LoginScreen = ({ navigation }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
-  const { setIsAuth, setAuthInfo } = useAuthContext();
+
+  const dispatch = useDispatch();
+  const error = useSelector(getAuthError);
+
+  useEffect(() => {if (!error) return; alert(error)}, [error]);
+  const onLinkClick = () => {
+    if (error) {
+      dispatch(changeError());
+    }navigation.navigate("Register")
+  }
 
   const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
@@ -35,9 +49,7 @@ const LoginScreen = ({ navigation }) => {
       alert("Введите все данные");
       return;
     }
-    console.log({ email, password });
-    setAuthInfo({ login: "unknown", photo: null, email, password });
-    setIsAuth(true);
+    dispatch(loginUser({ email, password }))
     reset();
   };
 
@@ -51,6 +63,8 @@ const LoginScreen = ({ navigation }) => {
     setSecure(true);
     setSecureText("Показать");
   };
+
+
 
   return (
     <TouchableWithoutFeedback
@@ -139,7 +153,7 @@ const LoginScreen = ({ navigation }) => {
                 <Text style={styles.link}>Нет аккаунта? </Text>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => navigation.navigate("Register")}
+                  onPress={onLinkClick}
                 >
                   <Text style={styles.link}>Зарегистрироваться</Text>
                 </TouchableOpacity>

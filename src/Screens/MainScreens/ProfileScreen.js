@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import DocumentPicker from "react-native-document-picker";
 import {
   View,
@@ -10,15 +11,19 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import {
+  logoutUser,
+} from '../../redux/auth/authOperations';
 import { usePostsContext } from "../../hooks/usePostsContext";
+import {getUserName} from "../../redux/auth/authSelectors";
 import background from "../../assets/images/photo_bg.png";
 import Post from "../../components/Post";
 
 const ProfileScreen = ({ navigation }) => {
-  const { setIsAuth, authInfo, setAuthInfo } = useAuthContext();
   const { posts } = usePostsContext();
-  const [photo, setPhoto] = useState(authInfo.photo);
+  const [photo, setPhoto] = useState();
+  const name = useSelector(getUserName);
+  const dispatch = useDispatch();
 
   const loadPhoto = async () => {
     try {
@@ -26,7 +31,6 @@ const ProfileScreen = ({ navigation }) => {
         type: [DocumentPicker.types.allFiles],
       });
       setPhoto(res.uri);
-      setAuthInfo({ ...authInfo, photo: res });
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log("error -----", err);
@@ -38,7 +42,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const deletePhoto = () => {
     setPhoto(null);
-    setAuthInfo({ ...authInfo, photo: null });
   };
 
   return (
@@ -46,7 +49,7 @@ const ProfileScreen = ({ navigation }) => {
       <ImageBackground source={background} style={styles.background}>
         <View style={styles.block}>
           <View style={styles.photoBlock}>
-            {photo ? (
+            {/* {photo ? (
               <>
                 <Image source={{uri: photo}} style={styles.img} />
                 <AntDesign
@@ -67,16 +70,25 @@ const ProfileScreen = ({ navigation }) => {
                   style={styles.btn}
                 />
               </View>
-            )}
+            )} */}
+                          <View style={styles.img}>
+                <AntDesign
+                  name="pluscircleo"
+                  size={24}
+                  color="#FF6C00"
+                  onPress={loadPhoto}
+                  style={styles.btn}
+                />
+              </View>
           </View>
           <Ionicons
             name="exit-outline"
             style={styles.iconExit}
             size={24}
             color="#BDBDBD"
-            onPress={() => setIsAuth(false)}
+            onPress={() => dispatch(logoutUser())}
           />
-          <Text style={styles.name}>{authInfo.login}</Text>
+          <Text style={styles.name}>{name}</Text>
           <FlatList
             data={posts}
             keyExtractor={(item, index) => index.toString()}

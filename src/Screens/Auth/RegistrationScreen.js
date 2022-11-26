@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
   View,
@@ -14,7 +15,9 @@ import {
 import DocumentPicker from "react-native-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import background from "../../assets/images/photo_bg.png";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import { registerUser } from "../../redux/auth/authOperations";
+import { getAuthError } from "../../redux/auth/authSelectors";
+import { changeError } from "../../redux/auth/authSlice";
 
 const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState("");
@@ -27,7 +30,20 @@ const RegistrationScreen = ({ navigation }) => {
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
   const [photo, setPhoto] = useState();
-  const { setIsAuth, setAuthInfo } = useAuthContext();
+
+  const dispatch = useDispatch();
+  const error = useSelector(getAuthError);
+
+  useEffect(() => {
+    if (!error) return;
+    alert(error);
+  }, [error]);
+  const onLinkClick = () => {
+    if (error) {
+      dispatch(changeError());
+    }
+    navigation.navigate("Login");
+  };
 
   const loginHandler = (text) => setLogin(text);
   const emailHandler = (text) => setEmail(text);
@@ -38,14 +54,12 @@ const RegistrationScreen = ({ navigation }) => {
     setPassword("");
   };
 
-  const registerHandler = ({ navigation }) => {
+  const registerHandler = () => {
     if (!login || !email || !password) {
       alert("Введите все данные");
       return;
     }
-    console.log({ login, email, password });
-    setAuthInfo({ login, email, password, photo });
-    setIsAuth(true);
+    dispatch(registerUser({ login, email, password }));
     reset();
   };
 
@@ -75,7 +89,6 @@ const RegistrationScreen = ({ navigation }) => {
     }
   };
 
-
   const deletePhoto = () => {
     setPhoto(null);
   };
@@ -98,7 +111,7 @@ const RegistrationScreen = ({ navigation }) => {
             <View style={styles.photoBlock}>
               {photo ? (
                 <>
-                  <Image source={{uri: photo}} style={styles.img} />
+                  <Image source={{ uri: photo }} style={styles.img} />
                   <AntDesign
                     name="closecircleo"
                     size={24}
@@ -208,10 +221,7 @@ const RegistrationScreen = ({ navigation }) => {
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <Text style={styles.link}>Уже есть аккаунт? </Text>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => navigation.navigate("Login")}
-                >
+                <TouchableOpacity activeOpacity={0.7} onPress={onLinkClick}>
                   <Text style={styles.link}>Войти</Text>
                 </TouchableOpacity>
               </View>

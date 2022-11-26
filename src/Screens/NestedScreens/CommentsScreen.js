@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { usePostsContext } from "../../hooks/usePostsContext";
-import { useAuthContext } from "../../hooks/useAuthContext";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
@@ -19,13 +18,12 @@ const CommentsScreen = ({ route }) => {
   const [comment, setComment] = useState();
   const [commentsRender, setCommentsRender] = useState(comments);
   const { posts, setPosts } = usePostsContext();
-  const { authInfo} = useAuthContext();
 
   const commentHandler = (text) => setComment(text);
 
   const addComment = () => {
     const date = new Date();
-    const newCommentsArray = [...commentsRender, {comment, date, author: authInfo.photo}];
+    const newCommentsArray = [...commentsRender, {comment, date, author: ''}];
     setComment("");
     const newPosts = posts.map(
       (item) =>

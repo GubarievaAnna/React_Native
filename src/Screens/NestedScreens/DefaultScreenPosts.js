@@ -1,24 +1,27 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { View, FlatList, Image, Text, StyleSheet } from "react-native";
 import { usePostsContext } from "../../hooks/usePostsContext";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import {getUserEmail, getUserName} from "../../redux/auth/authSelectors";
 import Post from "../../components/Post";
 
 const DefaultScreenPosts = ({ navigation }) => {
   const { posts } = usePostsContext();
-  const { authInfo } = useAuthContext();
+  const email = useSelector(getUserEmail);
+  const name = useSelector(getUserName);
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        {authInfo.photo ? (
+        {/* {authInfo.photo ? (
           <Image source={{uri:authInfo.photo}} style={styles.img} />
         ) : (
           <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
-        )}
+        )} */}
+        <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
         <View style={styles.textContainer}>
-          <Text style={styles.textName}>{authInfo.login}</Text>
-          <Text style={styles.textEmail}>{authInfo.email}</Text>
+          <Text style={styles.textName}>{name}</Text>
+          <Text style={styles.textEmail}>{email}</Text>
         </View>
       </View>
       <FlatList

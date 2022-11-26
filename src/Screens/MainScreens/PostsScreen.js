@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import {
+  logoutUser,
+} from '../../redux/auth/authOperations';
 import DefaultScreenPosts from "../NestedScreens/DefaultScreenPosts";
 import CommentsScreen from "../NestedScreens/CommentsScreen";
 import MapScreen from "../NestedScreens/MapScreen";
@@ -10,7 +13,7 @@ import MapScreen from "../NestedScreens/MapScreen";
 const NestedScreen = createStackNavigator();
 
 const PostsScreen = ({ navigation }) => {
-  const { setIsAuth } = useAuthContext();
+  const dispatch = useDispatch();
 
   return (
     <NestedScreen.Navigator>
@@ -36,7 +39,7 @@ const PostsScreen = ({ navigation }) => {
               style={{ marginRight: 21 }}
               size={24}
               color="rgba(33, 33, 33, 0.8)"
-              onPress={() => setIsAuth(false)}
+              onPress={() => dispatch(logoutUser())}
             />
           ),
         }}

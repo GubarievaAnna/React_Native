@@ -1,17 +1,13 @@
 import React, { useState } from "react";
+import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
-import { AuthContext } from "./src/hooks/useAuthContext";
 import RobotoRegular from "./src/assets/fonts/Roboto-Regular.ttf";
 import RobotoMedium from "./src/assets/fonts/Roboto-Medium.ttf";
 import RobotoBold from "./src/assets/fonts/Roboto-Bold.ttf";
-import RegistrationScreen from "./src/Screens/Auth/RegistrationScreen";
-import LoginScreen from "./src/Screens/Auth/LoginScreen";
-import Home from "./src/Screens/Home";
-
-const MainStack = createStackNavigator();
+import { store } from "./src/redux/store";
+import Main from "./src/components/Main";
 
 const loadFonts = async () => {
   await Font.loadAsync({
@@ -23,8 +19,6 @@ const loadFonts = async () => {
 
 const App = () => {
   const [isReady, setIsReady] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
-  const [authInfo, setAuthInfo] = useState(null);
 
   if (!isReady) {
     return (
@@ -37,23 +31,11 @@ const App = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ setIsAuth, authInfo, setAuthInfo }}>
+    <Provider store={store}>
       <NavigationContainer>
-        <MainStack.Navigator screenOptions={{ headerShown: false }}>
-          {!isAuth ? (
-            <>
-              <MainStack.Screen name="Login" component={LoginScreen} />
-              <MainStack.Screen
-                name="Register"
-                component={RegistrationScreen}
-              />
-            </>
-          ) : (
-            <MainStack.Screen name="Home" component={Home} />
-          )}
-        </MainStack.Navigator>
+        <Main />
       </NavigationContainer>
-    </AuthContext.Provider>
+    </Provider>
   );
 };
 
