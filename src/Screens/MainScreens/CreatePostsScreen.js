@@ -28,11 +28,6 @@ const CreatePostsScreen = ({ navigation }) => {
   const { posts, setPosts } = usePostsContext();
   const userId = useSelector(getUserId);
 
-  const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-    setPhoto(photo.uri);
-  };
-
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -69,6 +64,11 @@ const CreatePostsScreen = ({ navigation }) => {
     setPosts([...posts, { photo, title, place, location, comments: [] }]);
     navigation.navigate("Posts");
     reset();
+  };
+
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
+    setPhoto(photo.uri);
   };
 
   return (
