@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import auth from "../../firebase/config";
+import {auth} from "../../firebase/config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -49,12 +49,6 @@ export const loginUser = createAsyncThunk(
         password
       );
       const { uid, email: userEmail, displayName } = userCredential.user;
-
-      console.log("login object", {
-        name: displayName,
-        userId: uid,
-        email: userEmail,
-      });
 
       return {
         name: displayName,

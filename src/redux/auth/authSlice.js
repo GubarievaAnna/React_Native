@@ -66,5 +66,5 @@ const authSlice = createSlice({
   // }
 });
 
-export const { changeError, updateUserProfile } = authSlice.actions;
+export const { changeError} = authSlice.actions;
 export default authSlice.reducer;

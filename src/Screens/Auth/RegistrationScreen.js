@@ -38,6 +38,8 @@ const RegistrationScreen = ({ navigation }) => {
     if (!error) return;
     alert(error);
   }, [error]);
+
+  
   const onLinkClick = () => {
     if (error) {
       dispatch(changeError());

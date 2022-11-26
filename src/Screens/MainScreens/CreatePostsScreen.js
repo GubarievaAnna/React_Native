@@ -12,8 +12,9 @@ import * as Location from "expo-location";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import {db} from "../../firebase/config";
 import { usePostsContext } from "../../hooks/usePostsContext";
-// import plug from "../../assets/images/photo_bg.png";
+
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
