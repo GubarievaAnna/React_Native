@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {auth} from "../../firebase/config";
+import { auth } from "../../firebase/config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -22,7 +22,7 @@ export const registerUser = createAsyncThunk(
 
       await updateProfile(user, {
         displayName: login,
-        photoURL: photo
+        photoURL: photo,
       });
 
       const { uid, email: userEmail, displayName, photoURL } = user;
@@ -31,7 +31,7 @@ export const registerUser = createAsyncThunk(
         name: displayName,
         userId: uid,
         email: userEmail,
-        photo: photoURL
+        photo: photoURL,
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
@@ -50,13 +50,18 @@ export const loginUser = createAsyncThunk(
         email,
         password
       );
-      const { uid, email: userEmail, displayName, photoURL } = userCredential.user;
+      const {
+        uid,
+        email: userEmail,
+        displayName,
+        photoURL,
+      } = userCredential.user;
 
       return {
         name: displayName,
         userId: uid,
         email: userEmail,
-        photo: photoURL
+        photo: photoURL,
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
@@ -76,20 +81,30 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-// export const currentUser = createAsyncThunk("auth/current", async (_, thunkApi) => {
-//   try {
-//     let object;
-//     await onAuthStateChanged(auth, (user) => {
-//       if (user) {
-//         const name = user.displayName;
-//         const email = user.email;
-//         const userId = user.uid;
-//         object = { name, email, userId, isAuth: true };
-//         return;
-//       } object = { name: '', email: "", userId: "", isAuth: false};
-//     });
-// return object;
-//   } catch (error) {
-//     return thunkApi.rejectWithValue(error.message);
-//   }
-// });
+export const currentUser = createAsyncThunk(
+  "auth/current",
+  async () => {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) {
+          resolve({
+            userId: user.uid,
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+            isAuth: true,
+          });
+        } else {
+          resolve({
+            userId: "",
+            name: "",
+            email: "",
+            photo: "",
+            isAuth: false,
+          });
+        }
+      });
+    });
+  }
+);

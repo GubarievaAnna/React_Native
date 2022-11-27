@@ -21,7 +21,9 @@ const authSlice = createSlice({
     changeError(state) {
       state.error = null;
     },
-    changePhoto(state, {payload}) {state.photo = payload}
+    changePhoto(state, { payload }) {
+      state.photo = payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -65,17 +67,17 @@ const authSlice = createSlice({
         state.email = "";
         state.photo = "";
         state.isAuth = false;
+      })
+      .addCase(currentUser.fulfilled, (state, { payload }) => {
+        const { userId, name, email, photo, isAuth } = payload;
+        state.id = userId;
+        state.name = name;
+        state.email = email;
+        state.photo = photo;
+        state.isAuth = isAuth;
       });
   },
-  // [currentUser.fulfilled]: (state, { payload }) => {
-  //   const {userId, name, email, isAuth} = payload;
-  //   state.id = userId;
-  //   state.name = name;
-  //   state.email = email;
-  //   state.isAuth = isAuth;
-  // },
-  // }
 });
 
-export const { changeError} = authSlice.actions;
+export const { changeError, changePhoto } = authSlice.actions;
 export default authSlice.reducer;
