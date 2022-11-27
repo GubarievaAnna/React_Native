@@ -67,7 +67,7 @@ const PostsScreen = ({ navigation }) => {
               size={24}
               color="black"
               onPress={() => {
-                navigation.goBack(null)
+                navigation.goBack()
               }}
             />
           ),
@@ -96,7 +96,7 @@ const PostsScreen = ({ navigation }) => {
               size={24}
               color="black"
               onPress={() => {
-                navigation.goBack(null)
+                navigation.goBack()
               }}
             />
           ),

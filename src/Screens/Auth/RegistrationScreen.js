@@ -12,13 +12,13 @@ import {
   Image,
   Platform,
 } from "react-native";
-import Loader from "../../components/Loader";
 import DocumentPicker from "react-native-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import background from "../../assets/images/photo_bg.png";
 import { registerUser } from "../../redux/auth/authOperations";
 import { getAuthError, getAuthLoading } from "../../redux/auth/authSelectors";
 import { changeError } from "../../redux/auth/authSlice";
+import Loader from "../../components/Loader";
 
 const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState("");
@@ -41,13 +41,6 @@ const RegistrationScreen = ({ navigation }) => {
     alert(error);
   }, [error]);
 
-  const onLinkClick = () => {
-    if (error) {
-      dispatch(changeError());
-    }
-    navigation.navigate("Login");
-  };
-
   const loginHandler = (text) => setLogin(text);
   const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
@@ -57,12 +50,18 @@ const RegistrationScreen = ({ navigation }) => {
     setPassword("");
   };
 
-  const registerHandler = () => {
+  const registerHandler = async () => {
     if (!login || !email || !password) {
       alert("Введите все данные");
       return;
     }
-    dispatch(registerUser({ login, email, password }));
+    if (photo) {
+      const photoUrl = await uploadPhotoToServer();
+      dispatch(registerUser({ login, email, password, photo: photoUrl }));
+      reset();
+      return;
+    }
+    dispatch(registerUser({ login, email, password, photo }));
     reset();
   };
 
@@ -92,8 +91,30 @@ const RegistrationScreen = ({ navigation }) => {
     }
   };
 
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniqueImageId = Date.now().toString();
+
+    const storageRef = ref(storage, `authImages/${uniqueImageId}`);
+    await uploadBytes(storageRef, file);
+
+    const photoUrl = await getDownloadURL(
+      ref(storage, `postImages/${uniqueImageId}`)
+    );
+    return photoUrl;
+  };
+
   const deletePhoto = () => {
     setPhoto(null);
+  };
+
+  const onLinkClick = () => {
+    if (error) {
+      dispatch(changeError());
+    }
+    navigation.navigate("Login");
   };
 
   return (

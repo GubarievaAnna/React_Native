@@ -11,13 +11,11 @@ import {
   Text,
   ImageBackground,
 } from "react-native";
-import Loader from "../../components/Loader";
-import {
-  loginUser,
-} from '../../redux/auth/authOperations';
+import { changeError } from "../../redux/auth/authSlice";
+import { loginUser } from "../../redux/auth/authOperations";
+import { getAuthError, getAuthLoading } from "../../redux/auth/authSelectors";
 import photo from "../../assets/images/photo_bg.png";
-import {getAuthError, getAuthLoading} from "../../redux/auth/authSelectors";
-import {changeError} from "../../redux/auth/authSlice";
+import Loader from "../../components/Loader";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -32,12 +30,10 @@ const LoginScreen = ({ navigation }) => {
   const error = useSelector(getAuthError);
   const dispatch = useDispatch();
 
-  useEffect(() => {if (!error) return; alert(error)}, [error]);
-  const onLinkClick = () => {
-    if (error) {
-      dispatch(changeError());
-    }navigation.navigate("Register")
-  }
+  useEffect(() => {
+    if (!error) return;
+    alert(error);
+  }, [error]);
 
   const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
@@ -51,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
       alert("Введите все данные");
       return;
     }
-    dispatch(loginUser({ email, password }))
+    dispatch(loginUser({ email, password }));
     reset();
   };
 
@@ -66,7 +62,12 @@ const LoginScreen = ({ navigation }) => {
     setSecureText("Показать");
   };
 
-
+  const onLinkClick = () => {
+    if (error) {
+      dispatch(changeError());
+    }
+    navigation.navigate("Register");
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -153,15 +154,12 @@ const LoginScreen = ({ navigation }) => {
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <Text style={styles.link}>Нет аккаунта? </Text>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={onLinkClick}
-                >
+                <TouchableOpacity activeOpacity={0.7} onPress={onLinkClick}>
                   <Text style={styles.link}>Зарегистрироваться</Text>
                 </TouchableOpacity>
               </View>
             </View>
-            {isLoading && <Loader/>}
+            {isLoading && <Loader />}
           </View>
         </ImageBackground>
       </View>

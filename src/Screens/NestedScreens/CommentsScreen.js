@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   TouchableOpacity,
@@ -9,34 +10,47 @@ import {
   Text
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { getUserId, getUserPhoto } from "../../redux/auth/authSelectors";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
-  const { photo, title, comments } = route.params;
+  const { postId, photo } = route.params;
+  const [comment, setComment] = useState();
+  const [allComments, setAllComments] = useState();
+  const userId = useSelector(getUserId);
+  const userPhoto = useSelector(getUserPhoto); 
 
-  // const [comment, setComment] = useState();
-  // const [commentsRender, setCommentsRender] = useState(comments);
+  const commentHandler = (text) => setComment(text);
 
-  // const commentHandler = (text) => setComment(text);
+  const addComment = async () => {
+    const date = new Date();
+      await addDoc(collection(db, "posts", postId, "comments"), {
+        comment, date, userId, userPhoto
+      });
+      setComment("");
+  };
 
-  // const addComment = () => {
-  //   const date = new Date();
-  //   const newCommentsArray = [...commentsRender, {comment, date, author: ''}];
-  //   setComment("");
-  //   const newPosts = posts.map(
-  //     (item) =>
-  //       ({...item, comments: item.title === title ? newCommentsArray : item.comments})
-  //   );
-  //   setPosts(newPosts);
-  //   setCommentsRender(newCommentsArray);
-  // };
+  const getAllComments = async () => {
+    onSnapshot(collection(db, "posts", postId, "comments"), (querySnapshot) => {
+      const commentsArray = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      setAllComments(commentsArray);
+    });
+  };
+
+  useEffect(() => {
+    getAllComments();
+  }, []);
+
+
 
   return (
     <View style={styles.container}>
       <Image source={{uri:photo}} style={styles.img} />
       <FlatList
-        data={commentsRender}
-        keyExtractor={(item, index) => index.toString()}
+        data={allComments}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (<Comment item={item}/>
         )}
       />
@@ -44,7 +58,7 @@ const CommentsScreen = ({ route }) => {
         <TextInput
           placeholder="Комментировать..."
           value={comment}
-          // onChangeText={commentHandler}
+          onChangeText={commentHandler}
           placeholderTextColor="#BDBDBD"
           selectionColor="#212121"
           style={styles.input}
@@ -52,7 +66,7 @@ const CommentsScreen = ({ route }) => {
         <TouchableOpacity
           style={styles.btnArrow}
           opacity={0.6}
-          // onPress={addComment}
+          onPress={addComment}
         >
           <AntDesign name="arrowup" size={24} color="#fff" />
         </TouchableOpacity>

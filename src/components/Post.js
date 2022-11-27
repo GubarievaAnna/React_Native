@@ -6,8 +6,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
 const Post = ({ item, navigation }) => {
-  const { photo, title, place, location, comments=[] } = item;
-  console.log(location)
+  const { photo, title, place, location, id} = item;
   const route = useRoute();
 
   return (
@@ -27,7 +26,7 @@ const Post = ({ item, navigation }) => {
               size={24}
               color="#FF6C00"
               onPress={() => {
-                navigation.navigate("Comments", { photo, title, comments });
+                navigation.navigate("Comments", {postId: id, photo});
               }}
             />
           ) : (
@@ -36,11 +35,11 @@ const Post = ({ item, navigation }) => {
               size={24}
               color="#BDBDBD"
               onPress={() => {
-                navigation.navigate("Comments", { photo, title, comments });
+                navigation.navigate("Comments", {postId: id, photo});
               }}
             />
           )}
-          <Text style={styles.commentsText}>{comments.length}</Text>
+          {/* <Text style={styles.commentsText}>{comments.length}</Text> */}
         </View>
         {route.name === "Profile" && (
           <View style={{ ...styles.iconsContainer, marginLeft: 24 }}>

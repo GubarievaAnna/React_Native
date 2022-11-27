@@ -12,79 +12,78 @@ import ProfileScreen from "../Screens/MainScreens/ProfileScreen";
 const MainTab = createBottomTabNavigator();
 
 const Home = ({ navigation }) => {
-
   return (
-      <MainTab.Navigator
-        screenOptions={{
-          tabBarShowLabel: false,
+    <MainTab.Navigator
+      screenOptions={{
+        tabBarShowLabel: false,
+      }}
+    >
+      <MainTab.Screen
+        name="Posts"
+        component={PostsScreen}
+        options={{
+          tabBarIcon: ({ focused, size, color }) => (
+            <Ionicons
+              name="grid-outline"
+              style={{ marginLeft: 70 }}
+              size={24}
+              color="rgba(33, 33, 33, 0.8)"
+            />
+          ),
+          headerShown: false,
         }}
-      >
-        <MainTab.Screen
-          name="Posts"
-          component={PostsScreen}
-          options={{
-            tabBarIcon: ({ focused, size, color }) => (
-              <Ionicons
-                name="grid-outline"
-                style={{ marginLeft: 70 }}
-                size={24}
-                color="rgba(33, 33, 33, 0.8)"
-              />
-            ),
-            headerShown: false,
-          }}
-        />
-        <MainTab.Screen
-          name="Create"
-          component={CreatePostsScreen}
-          options={{
-            tabBarHideOnKeyboard: true,
-            tabBarIcon: ({ focused, size, color }) => (
-              <View style={styles.iconAdd}>
-                <Ionicons name="add" size={24} color="#fff" />
-              </View>
-            ),
-            title: "Создать публикацию",
-            headerTitleAlign: "center",
-            headerStyle: {
-              borderBottomWidth: 1,
-              borderBottomColor: "rgba(0, 0, 0, 0.3)",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              fontFamily: "Roboto-Medium",
-              fontSize: 17,
-              color: "#212121",
-            },
-            headerLeft: () => (
-              <AntDesign
-                name="arrowleft"
-                style={{ marginLeft: 20 }}
-                size={24}
-                color="black"
-                onPress={() => {
-                  navigation.navigate("Posts");
-                }}
-              />
-            ),
-          }}
-        />
-        <MainTab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            tabBarIcon: ({ focused, size, color }) => (
-              <Feather
-                name="user"
-                style={{ marginRight: 70 }}
-                size={24}
-                color="rgba(33, 33, 33, 0.8)"
-              />
-            ),
-            headerShown: false,
-          }}
-        />
-      </MainTab.Navigator>
+      />
+      <MainTab.Screen
+        name="Create"
+        component={CreatePostsScreen}
+        options={{
+          tabBarHideOnKeyboard: true,
+          tabBarIcon: ({ focused, size, color }) => (
+            <View style={styles.iconAdd}>
+              <Ionicons name="add" size={24} color="#fff" />
+            </View>
+          ),
+          title: "Создать публикацию",
+          headerTitleAlign: "center",
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderBottomColor: "rgba(0, 0, 0, 0.3)",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontFamily: "Roboto-Medium",
+            fontSize: 17,
+            color: "#212121",
+          },
+          headerLeft: () => (
+            <AntDesign
+              name="arrowleft"
+              style={{ marginLeft: 20 }}
+              size={24}
+              color="black"
+              onPress={() => {
+                navigation.navigate("Posts");
+              }}
+            />
+          ),
+        }}
+      />
+      <MainTab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused, size, color }) => (
+            <Feather
+              name="user"
+              style={{ marginRight: 70 }}
+              size={24}
+              color="rgba(33, 33, 33, 0.8)"
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+    </MainTab.Navigator>
   );
 };
 

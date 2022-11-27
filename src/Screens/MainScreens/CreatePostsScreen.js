@@ -26,15 +26,17 @@ const CreatePostsScreen = ({ navigation }) => {
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [isStatusOk, setIsStatusOk] = useState(true);
   const userId = useSelector(getUserId);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setIsStatusOk(false);
+        console.log("Permission to access location was denied");
+        return;
       }
+      const locationRes = await Location.getCurrentPositionAsync({});
+      setLocation(locationRes.coords);
     })();
   }, []);
 
@@ -54,10 +56,6 @@ const CreatePostsScreen = ({ navigation }) => {
     setIsVisible(true);
     try {
       const photoUrl = await uploadPhotoToServer();
-      if (isStatusOk) {
-        const locationRes = await Location.getCurrentPositionAsync({});
-        setLocation(locationRes.coords);
-      }
       await addDoc(collection(db, "posts"), {
         photo: photoUrl,
         title,
@@ -191,7 +189,7 @@ const CreatePostsScreen = ({ navigation }) => {
           <AntDesign name="delete" size={24} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
-      {isVisible && <Loader/>}
+      {isVisible && <Loader />}
     </View>
   );
 };

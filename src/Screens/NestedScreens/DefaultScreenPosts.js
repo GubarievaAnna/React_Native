@@ -5,13 +5,15 @@ import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import {
   getUserEmail,
-  getUserName,
+  getUserName, getUserPhoto
 } from "../../redux/auth/authSelectors";
 import Post from "../../components/Post";
 
 const DefaultScreenPosts = ({ navigation }) => {
   const email = useSelector(getUserEmail);
   const name = useSelector(getUserName);
+  const photo = useSelector(getUserPhoto); 
+
   const [posts, setPosts] = useState([]);
 
   const getAllPosts = async () => {
@@ -28,12 +30,11 @@ const DefaultScreenPosts = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        {/* {authInfo.photo ? (
+        {photo ? (
           <Image source={{uri:authInfo.photo}} style={styles.img} />
         ) : (
           <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
-        )} */}
-        <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
+        )}
         <View style={styles.textContainer}>
           <Text style={styles.textName}>{name}</Text>
           <Text style={styles.textEmail}>{email}</Text>

@@ -29,10 +29,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
-        const { userId, name, email } = payload;
+        const { userId, name, email, photo } = payload;
         state.id = userId;
         state.name = name;
         state.email = email;
+        state.photo = photo;
         state.isAuth = true;
         state.isLoading = false;
       })
@@ -45,10 +46,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
-        const { userId, name, email } = payload;
+        const { userId, name, email, photo } = payload;
         state.id = userId;
         state.name = name;
         state.email = email;
+        state.photo = photo;
         state.isAuth = true;
         state.isLoading = false;
       })
@@ -60,6 +62,7 @@ const authSlice = createSlice({
         state.id = "";
         state.name = "";
         state.email = "";
+        state.photo = "";
         state.isAuth = false;
       });
   },

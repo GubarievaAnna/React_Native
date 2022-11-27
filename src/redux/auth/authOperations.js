@@ -12,7 +12,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, thunkApi) => {
     try {
-      const { login, email, password } = userData;
+      const { login, email, password, photo } = userData;
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -22,14 +22,16 @@ export const registerUser = createAsyncThunk(
 
       await updateProfile(user, {
         displayName: login,
+        photoURL: photo
       });
 
-      const { uid, email: userEmail, displayName } = user;
+      const { uid, email: userEmail, displayName, photoURL } = user;
 
       return {
         name: displayName,
         userId: uid,
         email: userEmail,
+        photo: photoURL
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
@@ -48,12 +50,13 @@ export const loginUser = createAsyncThunk(
         email,
         password
       );
-      const { uid, email: userEmail, displayName } = userCredential.user;
+      const { uid, email: userEmail, displayName, photoURL } = userCredential.user;
 
       return {
         name: displayName,
         userId: uid,
         email: userEmail,
+        photo: photoURL
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);

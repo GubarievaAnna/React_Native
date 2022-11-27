@@ -6,20 +6,20 @@ import "moment/locale/ru";
 moment.locale("ru");
 
 const Comment = ({ item }) => {
-  const { author, comment, date } = item;
+  const { comment, date, userId, userPhoto } = item;
 
   return (
     <View style={styles.container}>
-      {author ? (
-        <Image source={{uri:author}} style={styles.img} />
+      {userPhoto ? (
+        <Image source={{ uri: userPhoto }} style={styles.img} />
       ) : (
         <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
       )}
       <View style={styles.blockCommentText}>
         <Text style={styles.comment}>{comment}</Text>
         <Text style={styles.date}>
-          {moment(date).format("DD MMMM, YYYY")} |{" "}
-          {moment(item.date).format("hh:mm")}
+          {moment(date).format("DD MMMM, YYYY")} |
+          {moment(date).format("hh:mm")}
         </Text>
       </View>
     </View>
