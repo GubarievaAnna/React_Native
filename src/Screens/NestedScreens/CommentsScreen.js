@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
-  Text
+  Text,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { collection, addDoc } from "firebase/firestore";
@@ -20,21 +20,27 @@ const CommentsScreen = ({ route }) => {
   const [comment, setComment] = useState();
   const [allComments, setAllComments] = useState();
   const userId = useSelector(getUserId);
-  const userPhoto = useSelector(getUserPhoto); 
+  const userPhoto = useSelector(getUserPhoto);
 
   const commentHandler = (text) => setComment(text);
 
   const addComment = async () => {
     const date = new Date();
-      await addDoc(collection(db, "posts", postId, "comments"), {
-        comment, date, userId, userPhoto
-      });
-      setComment("");
+    await addDoc(collection(db, "posts", postId, "comments"), {
+      comment,
+      date,
+      userId,
+      userPhoto,
+    });
+    setComment("");
   };
 
   const getAllComments = async () => {
     onSnapshot(collection(db, "posts", postId, "comments"), (querySnapshot) => {
-      const commentsArray = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      const commentsArray = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
       setAllComments(commentsArray);
     });
   };
@@ -43,16 +49,13 @@ const CommentsScreen = ({ route }) => {
     getAllComments();
   }, []);
 
-
-
   return (
     <View style={styles.container}>
-      <Image source={{uri:photo}} style={styles.img} />
+      <Image source={{ uri: photo }} style={styles.img} />
       <FlatList
         data={allComments}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (<Comment item={item}/>
-        )}
+        renderItem={({ item }) => <Comment item={item} />}
       />
       <View style={styles.blockInput}>
         <TextInput
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
-  img: { width: "100%", height: 240, borderRadius: 8, marginBottom: 32},
+  img: { width: "100%", height: 240, borderRadius: 8, marginBottom: 32 },
   btnArrow: {
     position: "absolute",
     top: 8,
@@ -97,7 +100,12 @@ const styles = StyleSheet.create({
     height: 34,
   },
   blockInput: { width: "100%", position: "relative", height: 50 },
-  input: { borderRadius: 100, borderWidth: 1, borderColor: "#E8E8E8", padding: 16  },
+  input: {
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+    padding: 16,
+  },
 });
 
 export default CommentsScreen;
