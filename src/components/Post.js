@@ -29,7 +29,23 @@ const Post = ({ item, navigation }) => {
       alert("вы уже лайкали эту публикацию");
       return;
     }
-    await updateDoc(docRef, { likes: [...docData.likes, { userId, userName }] });
+    await updateDoc(docRef, {
+      likes: [...docData.likes, { userId, userName }],
+    });
+  };
+
+  const navigateToComments = () => {
+    navigation.navigate("Comments", {
+      postId: id,
+      photo,
+    });
+  };
+
+  const navigateToMap = () => {
+    navigation.navigate("Map", {
+      latitude: location ? location.latitude : 0,
+      longitude: location ? location.longitude : 0,
+    });
   };
 
   return (
@@ -48,24 +64,14 @@ const Post = ({ item, navigation }) => {
               name="comment"
               size={24}
               color="#FF6C00"
-              onPress={() => {
-                navigation.navigate("Comments", {
-                  postId: id,
-                  photo
-                });
-              }}
+              onPress={navigateToComments}
             />
           ) : (
             <EvilIcons
               name="comment"
               size={24}
               color="#BDBDBD"
-              onPress={() => {
-                navigation.navigate("Comments", {
-                  postId: id,
-                  photo
-                });
-              }}
+              onPress={navigateToComments}
             />
           )}
           <Text style={styles.commentsText}>{comments}</Text>
@@ -84,12 +90,7 @@ const Post = ({ item, navigation }) => {
             name="location"
             size={24}
             color="#BDBDBD"
-            onPress={() => {
-              navigation.navigate("Map", {
-                latitude: location ? location.latitude : 0,
-                longitude: location ? location.longitude : 0,
-              });
-            }}
+            onPress={navigateToMap}
           />
           <Text style={styles.placeText}>{place}</Text>
         </View>
