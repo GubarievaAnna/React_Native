@@ -8,20 +8,30 @@ import {
   TextInput,
   FlatList,
   Text,
-  TouchableWithoutFeedback, Keyboard
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { collection, doc, addDoc, onSnapshot, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  addDoc,
+  onSnapshot,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { getUserId, getUserPhoto } from "../../redux/auth/authSelectors";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
-  const { postId, photo} = route.params;
+  const { postId, photo } = route.params;
 
   const [comment, setComment] = useState();
   const [allComments, setAllComments] = useState();
-  
+  const [showKeyboard, setShowKeyboard] = useState(false);
+
   const userId = useSelector(getUserId);
   const userPhoto = useSelector(getUserPhoto);
 
@@ -42,14 +52,18 @@ const CommentsScreen = ({ route }) => {
     await updateDoc(docRef, { comments: docData.comments + 1 });
 
     setComment("");
+    setShowKeyboard(false);
+    Keyboard.dismiss();
   };
 
   const getAllComments = async () => {
     onSnapshot(collection(db, "posts", postId, "comments"), (querySnapshot) => {
-      const commentsArray = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })).sort((a,b) => a.date.seconds-b.date.seconds);
+      const commentsArray = querySnapshot.docs
+        .map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+        .sort((a, b) => a.date.seconds - b.date.seconds);
       setAllComments(commentsArray);
     });
   };
@@ -60,35 +74,37 @@ const CommentsScreen = ({ route }) => {
 
   return (
     <TouchableWithoutFeedback
-    onPress={() => {
-      Keyboard.dismiss();
-    }}
-  >
-    <View style={styles.container}>
-      <Image source={{ uri: photo }} style={styles.img} />
-      <FlatList
-        data={allComments}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Comment item={item} />}
-      />
-      <View style={styles.blockInput}>
-        <TextInput
-          placeholder="Комментировать..."
-          value={comment}
-          onChangeText={commentHandler}
-          placeholderTextColor="#BDBDBD"
-          selectionColor="#212121"
-          style={styles.input}
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <Image source={{ uri: photo }} style={styles.img} />
+        <FlatList
+          data={allComments}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <Comment item={item} />}
         />
-        <TouchableOpacity
-          style={styles.btnArrow}
-          opacity={0.6}
-          onPress={addComment}
-        >
-          <AntDesign name="arrowup" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={{...styles.blockInput, marginBottom: Platform.OS === "ios" && showKeyboard ? 220 : 0}}>
+          <TextInput
+            placeholder="Комментировать..."
+            value={comment}
+            onChangeText={commentHandler}
+            onFocus={() => setShowKeyboard(true)}
+            onBlur={() => setShowKeyboard(false)}
+            placeholderTextColor="#BDBDBD"
+            selectionColor="#212121"
+            style={styles.input}
+          />
+          <TouchableOpacity
+            style={styles.btnArrow}
+            opacity={0.6}
+            onPress={addComment}
+          >
+            <AntDesign name="arrowup" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
     </TouchableWithoutFeedback>
   );
 };
