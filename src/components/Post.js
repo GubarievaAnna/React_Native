@@ -4,14 +4,25 @@ import { useRoute } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const Post = ({ item, navigation }) => {
-  const { photo, title, place, location, id} = item;
+  const { photo, title, place, location, id, comments, likes } = item;
   const route = useRoute();
+
+  const addLike = async () => {
+    if (route.name === "Profile") {
+      alert("это ваша публикация, возможность лайкать отсутствует");
+      return;
+    }
+    const postRef = doc(db, "posts", id);
+    await updateDoc(postRef, { likes: likes + 1 });
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={{uri:photo}} style={styles.img} />
+      <Image source={{ uri: photo }} style={styles.img} />
       <Text style={styles.title}>{title}</Text>
       <View
         style={{
@@ -26,7 +37,11 @@ const Post = ({ item, navigation }) => {
               size={24}
               color="#FF6C00"
               onPress={() => {
-                navigation.navigate("Comments", {postId: id, photo});
+                navigation.navigate("Comments", {
+                  postId: id,
+                  photo,
+                  comments,
+                });
               }}
             />
           ) : (
@@ -35,18 +50,25 @@ const Post = ({ item, navigation }) => {
               size={24}
               color="#BDBDBD"
               onPress={() => {
-                navigation.navigate("Comments", {postId: id, photo});
+                navigation.navigate("Comments", {
+                  postId: id,
+                  photo,
+                  comments,
+                });
               }}
             />
           )}
-          {/* <Text style={styles.commentsText}>{comments.length}</Text> */}
+          <Text style={styles.commentsText}>{comments}</Text>
         </View>
-        {route.name === "Profile" && (
-          <View style={{ ...styles.iconsContainer, marginLeft: 24 }}>
-            <AntDesign name="like2" size={24} color="#FF6C00" />
-            <Text style={styles.commentsText}>0</Text>
-          </View>
-        )}
+        <View style={{ ...styles.iconsContainer, marginLeft: 24 }}>
+          <AntDesign
+            name="like2"
+            size={20}
+            color={route.name === "Profile" ? "#FF6C00" : "#BDBDBD"}
+            onPress={addLike}
+          />
+          <Text style={styles.commentsText}>{likes}</Text>
+        </View>
         <View style={{ ...styles.iconsContainer, marginLeft: "auto" }}>
           <EvilIcons
             name="location"

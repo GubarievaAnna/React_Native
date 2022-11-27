@@ -21,6 +21,7 @@ const authSlice = createSlice({
     changeError(state) {
       state.error = null;
     },
+    changePhoto(state, {payload}) {state.photo = payload}
   },
   extraReducers: (builder) => {
     builder

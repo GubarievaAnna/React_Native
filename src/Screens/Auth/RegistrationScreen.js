@@ -101,7 +101,7 @@ const RegistrationScreen = ({ navigation }) => {
     await uploadBytes(storageRef, file);
 
     const photoUrl = await getDownloadURL(
-      ref(storage, `postImages/${uniqueImageId}`)
+      ref(storage, `authImages/${uniqueImageId}`)
     );
     return photoUrl;
   };

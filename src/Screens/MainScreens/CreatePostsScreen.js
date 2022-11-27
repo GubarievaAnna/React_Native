@@ -36,6 +36,7 @@ const CreatePostsScreen = ({ navigation }) => {
         return;
       }
       const locationRes = await Location.getCurrentPositionAsync({});
+      console.log("location", location)
       setLocation(locationRes.coords);
     })();
   }, []);
@@ -62,6 +63,8 @@ const CreatePostsScreen = ({ navigation }) => {
         place,
         location,
         userId,
+        likes: 0,
+        comments: 0,
       });
       navigation.navigate("Posts");
       reset();

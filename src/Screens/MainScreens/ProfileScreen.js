@@ -11,18 +11,21 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { collection, query, where, onSnapshot, updateProfile } from "firebase/firestore";
+import { db, auth } from "../../firebase/config";
 import { logoutUser } from "../../redux/auth/authOperations";
-import { getUserName, getUserId } from "../../redux/auth/authSelectors";
+import { getUserName, getUserId, getUserPhoto } from "../../redux/auth/authSelectors";
+import { changePhoto } from "../../redux/auth/authSlice";
 import background from "../../assets/images/photo_bg.png";
 import Post from "../../components/Post";
 
 const ProfileScreen = ({ navigation }) => {
-  const [photo, setPhoto] = useState();
-  const [posts, setPosts] = useState([]);
   const name = useSelector(getUserName);
   const userId = useSelector(getUserId);
+  const photo = useSelector(getUserPhoto);
+
+  const [posts, setPosts] = useState([]);
+
   const dispatch = useDispatch();
 
   const getOwnPosts = async () => {
@@ -45,7 +48,7 @@ const ProfileScreen = ({ navigation }) => {
       const res = await DocumentPicker.pickSingle({
         type: [DocumentPicker.types.allFiles],
       });
-      setPhoto(res.uri);
+      return res.uri;
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log("error -----", err);
@@ -55,8 +58,26 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
-  const deletePhoto = () => {
-    setPhoto(null);
+  const uploadPhotoToServer = async () => {
+    const loadedPhoto = await loadPhoto();
+    const response = await fetch(loadedPhoto);
+    const file = await response.blob();
+
+    const uniqueImageId = Date.now().toString();
+
+    const storageRef = ref(storage, `authImages/${uniqueImageId}`);
+    await uploadBytes(storageRef, file);
+
+    const photoUrl = await getDownloadURL(
+      ref(storage, `authImages/${uniqueImageId}`)
+    );
+    await updateProfile(auth.currentUser, {photoURL: photoUrl})
+    dispatch(changePhoto(photoUrl));
+  };
+
+  const deletePhoto = async () => {
+    await updateProfile(auth.currentUser, {photoURL: null})
+    dispatch(changePhoto(null));
   };
 
   return (
@@ -64,7 +85,7 @@ const ProfileScreen = ({ navigation }) => {
       <ImageBackground source={background} style={styles.background}>
         <View style={styles.block}>
           <View style={styles.photoBlock}>
-            {/* {photo ? (
+            {photo ? (
               <>
                 <Image source={{uri: photo}} style={styles.img} />
                 <AntDesign
@@ -81,20 +102,11 @@ const ProfileScreen = ({ navigation }) => {
                   name="pluscircleo"
                   size={24}
                   color="#FF6C00"
-                  onPress={loadPhoto}
+                  onPress={uploadPhotoToServer}
                   style={styles.btn}
                 />
               </View>
-            )} */}
-            <View style={styles.img}>
-              <AntDesign
-                name="pluscircleo"
-                size={24}
-                color="#FF6C00"
-                onPress={loadPhoto}
-                style={styles.btn}
-              />
-            </View>
+            )}
           </View>
           <Ionicons
             name="exit-outline"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   View,
@@ -10,13 +10,13 @@ import {
   Text,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { getUserId, getUserPhoto } from "../../redux/auth/authSelectors";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
-  const { postId, photo } = route.params;
+  const { postId, photo, comments } = route.params;
   const [comment, setComment] = useState();
   const [allComments, setAllComments] = useState();
   const userId = useSelector(getUserId);
@@ -32,6 +32,8 @@ const CommentsScreen = ({ route }) => {
       userId,
       userPhoto,
     });
+    const postRef = doc(db, "posts", postId);
+    await updateDoc(postRef, { comments: comments + 1 });
     setComment("");
   };
 

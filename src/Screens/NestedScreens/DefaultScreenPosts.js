@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { View, FlatList, Image, Text, StyleSheet } from "react-native";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import {
   getUserEmail,
@@ -31,7 +31,7 @@ const DefaultScreenPosts = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.infoContainer}>
         {photo ? (
-          <Image source={{uri:authInfo.photo}} style={styles.img} />
+          <Image source={{uri:photo}} style={styles.img} />
         ) : (
           <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
         )}
