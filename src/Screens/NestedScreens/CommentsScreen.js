@@ -17,8 +17,10 @@ import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
   const { postId, photo} = route.params;
+
   const [comment, setComment] = useState();
   const [allComments, setAllComments] = useState();
+  
   const userId = useSelector(getUserId);
   const userPhoto = useSelector(getUserPhoto);
 

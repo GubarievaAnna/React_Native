@@ -25,7 +25,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const userId = useSelector(getUserId);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const CreatePostsScreen = ({ navigation }) => {
       alert("Введите название и метность");
       return;
     }
-    setIsVisible(true);
+    setIsLoading(true);
     try {
       const photoUrl = await uploadPhotoToServer();
       await addDoc(collection(db, "posts"), {
@@ -71,7 +71,7 @@ const CreatePostsScreen = ({ navigation }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsVisible(false);
+      setIsLoading(false);
     }
   };
 
@@ -192,7 +192,7 @@ const CreatePostsScreen = ({ navigation }) => {
           <AntDesign name="delete" size={24} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
-      {isVisible && <Loader />}
+      {isLoading && <Loader />}
     </View>
   );
 };

@@ -3,9 +3,7 @@ import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 const MapScreen = ({ route }) => {
-
-  console.log(route.params);
-  
+ 
   return (
     <View style={{ flex: 1 }}>
       <MapView
