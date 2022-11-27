@@ -63,7 +63,7 @@ const CreatePostsScreen = ({ navigation }) => {
         place,
         location,
         userId,
-        likes: 0,
+        likes: [],
         comments: 0,
       });
       navigation.navigate("Posts");

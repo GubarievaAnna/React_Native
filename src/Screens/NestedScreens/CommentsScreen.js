@@ -10,13 +10,13 @@ import {
   Text,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { collection, addDoc, onSnapshot, doc, updateDoc } from "firebase/firestore";
+import { collection, doc, addDoc, onSnapshot, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { getUserId, getUserPhoto } from "../../redux/auth/authSelectors";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
-  const { postId, photo, comments } = route.params;
+  const { postId, photo} = route.params;
   const [comment, setComment] = useState();
   const [allComments, setAllComments] = useState();
   const userId = useSelector(getUserId);
@@ -32,8 +32,12 @@ const CommentsScreen = ({ route }) => {
       userId,
       userPhoto,
     });
-    const postRef = doc(db, "posts", postId);
-    await updateDoc(postRef, { comments: comments + 1 });
+
+    const docRef = doc(db, "posts", postId);
+    const docSnap = await getDoc(docRef);
+    const docData = docSnap.data();
+    await updateDoc(docRef, { comments: docData.comments + 1 });
+
     setComment("");
   };
 

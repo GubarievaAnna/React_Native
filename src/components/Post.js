@@ -1,23 +1,35 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, collection, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
+import { getUserId, getUserName } from "../redux/auth/authSelectors";
 
 const Post = ({ item, navigation }) => {
   const { photo, title, place, location, id, comments, likes } = item;
+  const userId = useSelector(getUserId);
+  const userName = useSelector(getUserName);
   const route = useRoute();
 
   const addLike = async () => {
-    if (route.name === "Profile") {
-      alert("это ваша публикация, возможность лайкать отсутствует");
+    const docRef = doc(db, "posts", id);
+    const docSnap = await getDoc(docRef);
+
+    const docData = docSnap.data();
+    if (docData.userId === userId) {
+      alert("это ваша публикация, вы не можете ее лайкать");
       return;
     }
-    const postRef = doc(db, "posts", id);
-    await updateDoc(postRef, { likes: likes + 1 });
+    const ourLike = docData.likes.find((item) => item.userId === userId);
+    if (ourLike) {
+      alert("вы уже лайкали эту публикацию");
+      return;
+    }
+    await updateDoc(docRef, { likes: [...docData.likes, { userId, userName }] });
   };
 
   return (
@@ -39,8 +51,7 @@ const Post = ({ item, navigation }) => {
               onPress={() => {
                 navigation.navigate("Comments", {
                   postId: id,
-                  photo,
-                  comments,
+                  photo
                 });
               }}
             />
@@ -52,8 +63,7 @@ const Post = ({ item, navigation }) => {
               onPress={() => {
                 navigation.navigate("Comments", {
                   postId: id,
-                  photo,
-                  comments,
+                  photo
                 });
               }}
             />
@@ -67,7 +77,7 @@ const Post = ({ item, navigation }) => {
             color={route.name === "Profile" ? "#FF6C00" : "#BDBDBD"}
             onPress={addLike}
           />
-          <Text style={styles.commentsText}>{likes}</Text>
+          <Text style={styles.commentsText}>{likes.length}</Text>
         </View>
         <View style={{ ...styles.iconsContainer, marginLeft: "auto" }}>
           <EvilIcons

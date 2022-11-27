@@ -65,6 +65,21 @@ const RegistrationScreen = ({ navigation }) => {
     reset();
   };
 
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniqueImageId = Date.now().toString();
+
+    const storageRef = ref(storage, `authImages/${uniqueImageId}`);
+    await uploadBytes(storageRef, file);
+
+    const photoUrl = await getDownloadURL(
+      ref(storage, `authImages/${uniqueImageId}`)
+    );
+    return photoUrl;
+  };
+
   const showPassword = () => {
     if (password === "" && secure) return;
     if (secure) {
@@ -89,21 +104,6 @@ const RegistrationScreen = ({ navigation }) => {
         console.log("DocumentPicker error", err);
       }
     }
-  };
-
-  const uploadPhotoToServer = async () => {
-    const response = await fetch(photo);
-    const file = await response.blob();
-
-    const uniqueImageId = Date.now().toString();
-
-    const storageRef = ref(storage, `authImages/${uniqueImageId}`);
-    await uploadBytes(storageRef, file);
-
-    const photoUrl = await getDownloadURL(
-      ref(storage, `authImages/${uniqueImageId}`)
-    );
-    return photoUrl;
   };
 
   const deletePhoto = () => {
