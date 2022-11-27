@@ -12,11 +12,12 @@ import {
   Image,
   Platform,
 } from "react-native";
+import Loader from "../../components/Loader";
 import DocumentPicker from "react-native-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import background from "../../assets/images/photo_bg.png";
 import { registerUser } from "../../redux/auth/authOperations";
-import { getAuthError } from "../../redux/auth/authSelectors";
+import { getAuthError, getAuthLoading } from "../../redux/auth/authSelectors";
 import { changeError } from "../../redux/auth/authSlice";
 
 const RegistrationScreen = ({ navigation }) => {
@@ -31,15 +32,15 @@ const RegistrationScreen = ({ navigation }) => {
   const [secureText, setSecureText] = useState("Показать");
   const [photo, setPhoto] = useState();
 
-  const dispatch = useDispatch();
+  const isLoading = useSelector(getAuthLoading);
   const error = useSelector(getAuthError);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!error) return;
     alert(error);
   }, [error]);
 
-  
   const onLinkClick = () => {
     if (error) {
       dispatch(changeError());
@@ -228,6 +229,7 @@ const RegistrationScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
+            {isLoading && <Loader />}
           </View>
         </ImageBackground>
       </View>

@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { View, FlatList, Image, Text, StyleSheet } from "react-native";
-import { usePostsContext } from "../../hooks/usePostsContext";
-import {getUserEmail, getUserName} from "../../redux/auth/authSelectors";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import {
+  getUserEmail,
+  getUserName,
+} from "../../redux/auth/authSelectors";
 import Post from "../../components/Post";
 
 const DefaultScreenPosts = ({ navigation }) => {
-  const { posts } = usePostsContext();
   const email = useSelector(getUserEmail);
   const name = useSelector(getUserName);
+  const [posts, setPosts] = useState([]);
+
+  const getAllPosts = async () => {
+    onSnapshot(collection(db, "posts"), (querySnapshot) => {
+      const postsArray = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      setPosts(postsArray);
+    });
+  };
+
+  useEffect(() => {
+    getAllPosts();
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -16,8 +16,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase/config";
-import { usePostsContext } from "../../hooks/usePostsContext";
 import { getUserId } from "../../redux/auth/authSelectors";
+import Loader from "../../components/Loader";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -25,20 +25,16 @@ const CreatePostsScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
-  const { posts, setPosts } = usePostsContext();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isStatusOk, setIsStatusOk] = useState(true);
   const userId = useSelector(getUserId);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
+        setIsStatusOk(false);
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      console.log("useEffect", location);
-      setLocation(location.coords);
     })();
   }, []);
 
@@ -55,20 +51,47 @@ const CreatePostsScreen = ({ navigation }) => {
       alert("Введите название и метность");
       return;
     }
-    await addDoc(collection(db, "posts"), {
-      title,
-      place,
-      location,
-      userId,
-    });
-    setPosts([...posts, { photo, title, place, location, comments: [] }]);
-    navigation.navigate("Posts");
-    reset();
+    setIsVisible(true);
+    try {
+      const photoUrl = await uploadPhotoToServer();
+      if (isStatusOk) {
+        const locationRes = await Location.getCurrentPositionAsync({});
+        setLocation(locationRes.coords);
+      }
+      await addDoc(collection(db, "posts"), {
+        photo: photoUrl,
+        title,
+        place,
+        location,
+        userId,
+      });
+      navigation.navigate("Posts");
+      reset();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsVisible(false);
+    }
   };
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+
+    const storageRef = ref(storage, `postImages/${uniquePostId}`);
+    await uploadBytes(storageRef, file);
+
+    const photoUrl = await getDownloadURL(
+      ref(storage, `postImages/${uniquePostId}`)
+    );
+    return photoUrl;
   };
 
   return (
@@ -168,6 +191,7 @@ const CreatePostsScreen = ({ navigation }) => {
           <AntDesign name="delete" size={24} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
+      {isVisible && <Loader/>}
     </View>
   );
 };
@@ -238,6 +262,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   iconLocation: { position: "absolute", left: 0, top: 13 },
+  lottie: {
+    width: 300,
+    height: 300,
+  },
 });
 
 export default CreatePostsScreen;

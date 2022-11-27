@@ -9,29 +9,27 @@ import {
   Text
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { usePostsContext } from "../../hooks/usePostsContext";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
   const { photo, title, comments } = route.params;
 
-  const [comment, setComment] = useState();
-  const [commentsRender, setCommentsRender] = useState(comments);
-  const { posts, setPosts } = usePostsContext();
+  // const [comment, setComment] = useState();
+  // const [commentsRender, setCommentsRender] = useState(comments);
 
-  const commentHandler = (text) => setComment(text);
+  // const commentHandler = (text) => setComment(text);
 
-  const addComment = () => {
-    const date = new Date();
-    const newCommentsArray = [...commentsRender, {comment, date, author: ''}];
-    setComment("");
-    const newPosts = posts.map(
-      (item) =>
-        ({...item, comments: item.title === title ? newCommentsArray : item.comments})
-    );
-    setPosts(newPosts);
-    setCommentsRender(newCommentsArray);
-  };
+  // const addComment = () => {
+  //   const date = new Date();
+  //   const newCommentsArray = [...commentsRender, {comment, date, author: ''}];
+  //   setComment("");
+  //   const newPosts = posts.map(
+  //     (item) =>
+  //       ({...item, comments: item.title === title ? newCommentsArray : item.comments})
+  //   );
+  //   setPosts(newPosts);
+  //   setCommentsRender(newCommentsArray);
+  // };
 
   return (
     <View style={styles.container}>
@@ -46,7 +44,7 @@ const CommentsScreen = ({ route }) => {
         <TextInput
           placeholder="Комментировать..."
           value={comment}
-          onChangeText={commentHandler}
+          // onChangeText={commentHandler}
           placeholderTextColor="#BDBDBD"
           selectionColor="#212121"
           style={styles.input}
@@ -54,7 +52,7 @@ const CommentsScreen = ({ route }) => {
         <TouchableOpacity
           style={styles.btnArrow}
           opacity={0.6}
-          onPress={addComment}
+          // onPress={addComment}
         >
           <AntDesign name="arrowup" size={24} color="#fff" />
         </TouchableOpacity>

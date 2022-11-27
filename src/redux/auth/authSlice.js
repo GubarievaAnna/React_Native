@@ -14,6 +14,7 @@ const authSlice = createSlice({
     email: "",
     photo: "",
     isAuth: false,
+    isLoading: false,
     error: "",
   },
   reducers: {
@@ -24,6 +25,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
@@ -32,11 +34,14 @@ const authSlice = createSlice({
         state.name = name;
         state.email = email;
         state.isAuth = true;
+        state.isLoading = false;
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.error = payload;
+        state.isLoading = false;
       })
       .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
@@ -45,9 +50,11 @@ const authSlice = createSlice({
         state.name = name;
         state.email = email;
         state.isAuth = true;
+        state.isLoading = false;
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.error = payload;
+        state.isLoading = false;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.id = "";

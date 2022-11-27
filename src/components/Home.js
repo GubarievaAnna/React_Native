@@ -8,15 +8,12 @@ import { Ionicons } from "@expo/vector-icons";
 import PostsScreen from "../Screens/MainScreens/PostsScreen";
 import CreatePostsScreen from "../Screens/MainScreens/CreatePostsScreen";
 import ProfileScreen from "../Screens/MainScreens/ProfileScreen";
-import { PostsContext } from "../hooks/usePostsContext";
 
 const MainTab = createBottomTabNavigator();
 
 const Home = ({ navigation }) => {
-  const [posts, setPosts] = useState([]);
 
   return (
-    <PostsContext.Provider value={{ posts, setPosts }}>
       <MainTab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
@@ -88,7 +85,6 @@ const Home = ({ navigation }) => {
           }}
         />
       </MainTab.Navigator>
-    </PostsContext.Provider>
   );
 };
 

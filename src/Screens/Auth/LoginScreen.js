@@ -11,11 +11,12 @@ import {
   Text,
   ImageBackground,
 } from "react-native";
+import Loader from "../../components/Loader";
 import {
   loginUser,
 } from '../../redux/auth/authOperations';
 import photo from "../../assets/images/photo_bg.png";
-import {getAuthError} from "../../redux/auth/authSelectors";
+import {getAuthError, getAuthLoading} from "../../redux/auth/authSelectors";
 import {changeError} from "../../redux/auth/authSlice";
 
 const LoginScreen = ({ navigation }) => {
@@ -27,8 +28,9 @@ const LoginScreen = ({ navigation }) => {
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
 
-  const dispatch = useDispatch();
+  const isLoading = useSelector(getAuthLoading);
   const error = useSelector(getAuthError);
+  const dispatch = useDispatch();
 
   useEffect(() => {if (!error) return; alert(error)}, [error]);
   const onLinkClick = () => {
@@ -159,6 +161,7 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
+            {isLoading && <Loader/>}
           </View>
         </ImageBackground>
       </View>

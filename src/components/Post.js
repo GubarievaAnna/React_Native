@@ -6,7 +6,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
 const Post = ({ item, navigation }) => {
-  const { photo, title, place, location, comments } = item;
+  const { photo, title, place, location, comments=[] } = item;
+  console.log(location)
   const route = useRoute();
 
   return (

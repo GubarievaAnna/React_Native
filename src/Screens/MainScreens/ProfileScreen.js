@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DocumentPicker from "react-native-document-picker";
 import {
@@ -11,19 +11,34 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import {
-  logoutUser,
-} from '../../redux/auth/authOperations';
-import { usePostsContext } from "../../hooks/usePostsContext";
-import {getUserName} from "../../redux/auth/authSelectors";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { logoutUser } from "../../redux/auth/authOperations";
+import { getUserName, getUserId } from "../../redux/auth/authSelectors";
 import background from "../../assets/images/photo_bg.png";
 import Post from "../../components/Post";
 
 const ProfileScreen = ({ navigation }) => {
-  const { posts } = usePostsContext();
   const [photo, setPhoto] = useState();
+  const [posts, setPosts] = useState([]);
   const name = useSelector(getUserName);
+  const userId = useSelector(getUserId);
   const dispatch = useDispatch();
+
+  const getOwnPosts = async () => {
+    const q = query(collection(db, "posts"), where("userId", "==", userId));
+    onSnapshot(q, (querySnapshot) => {
+      const postsArray = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setPosts(postsArray);
+    });
+  };
+
+  useEffect(() => {
+    getOwnPosts();
+  }, []);
 
   const loadPhoto = async () => {
     try {
@@ -71,15 +86,15 @@ const ProfileScreen = ({ navigation }) => {
                 />
               </View>
             )} */}
-                          <View style={styles.img}>
-                <AntDesign
-                  name="pluscircleo"
-                  size={24}
-                  color="#FF6C00"
-                  onPress={loadPhoto}
-                  style={styles.btn}
-                />
-              </View>
+            <View style={styles.img}>
+              <AntDesign
+                name="pluscircleo"
+                size={24}
+                color="#FF6C00"
+                onPress={loadPhoto}
+                style={styles.btn}
+              />
+            </View>
           </View>
           <Ionicons
             name="exit-outline"
@@ -101,7 +116,6 @@ const ProfileScreen = ({ navigation }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
