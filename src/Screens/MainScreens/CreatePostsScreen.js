@@ -5,8 +5,11 @@ import {
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   Text,
   TextInput,
+  Platform,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
@@ -26,6 +29,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [place, setPlace] = useState("");
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
   const userId = useSelector(getUserId);
 
   useEffect(() => {
@@ -36,7 +40,7 @@ const CreatePostsScreen = ({ navigation }) => {
         return;
       }
       const locationRes = await Location.getCurrentPositionAsync({});
-      console.log("location", location)
+      console.log("location", location);
       setLocation(locationRes.coords);
     })();
   }, []);
@@ -96,104 +100,119 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cameraContainer}>
-        {!photo && (
-          <Camera style={styles.camera} ref={setCamera}>
-            <TouchableOpacity
-              onPress={takePhoto}
-              style={styles.iconContainer}
-              enabled={photo ? "false" : "true"}
-            >
-              <FontAwesome5 name="camera" size={20} color="#BDBDBD" />
-            </TouchableOpacity>
-          </Camera>
-        )}
-        {photo && (
-          <ImageBackground source={{ uri: photo }} style={styles.background}>
-            <TouchableOpacity
-              onPress={() => setPhoto(null)}
-              style={{
-                ...styles.iconContainer,
-                backgroundColor: "rgba(255, 255, 255, 0.3)",
-              }}
-            >
-              <FontAwesome5 name="camera" size={20} color="#fff" />
-            </TouchableOpacity>
-          </ImageBackground>
-        )}
-      </View>
-      <Text
-        onPress={() => {
-          if (!photo) return;
-          setPhoto(null);
-        }}
-        style={styles.loadText}
-      >
-        {!photo ? "Загрузите фото" : "Редактировать фото"}
-      </Text>
-      <TextInput
-        placeholder="Название..."
-        value={title}
-        onChangeText={titleHandler}
-        placeholderTextColor="#BDBDBD"
-        selectionColor="#212121"
-        style={styles.input}
-      />
-      <View
-        style={{
-          ...styles.input,
-          marginBottom: 32,
-          paddingLeft: 28,
-          position: "relative",
-        }}
-      >
-        <EvilIcons
-          name="location"
-          size={24}
-          color="#BDBDBD"
-          style={styles.iconLocation}
-        />
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.cameraContainer}>
+          {!photo && (
+            <Camera style={styles.camera} ref={setCamera}>
+              <TouchableOpacity
+                onPress={takePhoto}
+                style={styles.iconContainer}
+                enabled={photo ? "false" : "true"}
+              >
+                <FontAwesome5 name="camera" size={20} color="#BDBDBD" />
+              </TouchableOpacity>
+            </Camera>
+          )}
+          {photo && (
+            <ImageBackground source={{ uri: photo }} style={styles.background}>
+              <TouchableOpacity
+                onPress={() => setPhoto(null)}
+                style={{
+                  ...styles.iconContainer,
+                  backgroundColor: "rgba(255, 255, 255, 0.3)",
+                }}
+              >
+                <FontAwesome5 name="camera" size={20} color="#fff" />
+              </TouchableOpacity>
+            </ImageBackground>
+          )}
+        </View>
+        <Text
+          onPress={() => {
+            if (!photo) return;
+            setPhoto(null);
+          }}
+          style={styles.loadText}
+        >
+          {!photo ? "Загрузите фото" : "Редактировать фото"}
+        </Text>
         <TextInput
-          placeholder="Местность..."
-          value={place}
-          onChangeText={placeHandler}
+          placeholder="Название..."
+          value={title}
+          onChangeText={titleHandler}
           placeholderTextColor="#BDBDBD"
           selectionColor="#212121"
-        />
-      </View>
-
-      <TouchableOpacity
-        onPress={publishPost}
-        activeOpacity={0.8}
-        style={{
-          ...styles.btn,
-          backgroundColor: "#FF6C00",
-          backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
-        }}
-        disabled={!photo ? true : false}
-      >
-        <Text
+          onFocus={() => setShowKeyboard(true)}
+          onBlur={() => setShowKeyboard(false)}
           style={{
-            ...styles.btnTitle,
-            color: "#fff",
-            color: !photo ? "#BDBDBD" : "#FFF",
+            ...styles.input,
+            marginTop: Platform.OS === "android" && showKeyboard ? -20 : 0
+          }}
+        />
+        <View
+          style={{
+            ...styles.input,
+            marginTop: Platform.OS === "android" && showKeyboard ? -20 : 0,
+            marginBottom: 32,
+            paddingLeft: 28,
+            position: "relative",
           }}
         >
-          Опубликовать
-        </Text>
-      </TouchableOpacity>
-      <View style={{ width: "100%", alignItems: "center" }}>
+          <EvilIcons
+            name="location"
+            size={24}
+            color="#BDBDBD"
+            style={styles.iconLocation}
+          />
+          <TextInput
+            placeholder="Местность..."
+            value={place}
+            onChangeText={placeHandler}
+            placeholderTextColor="#BDBDBD"
+            selectionColor="#212121"
+            onFocus={() => setShowKeyboard(true)}
+            onBlur={() => setShowKeyboard(false)}
+          />
+        </View>
+
         <TouchableOpacity
-          style={styles.btnDelete}
-          activeOpacity={0.6}
-          onPress={reset}
+          onPress={publishPost}
+          activeOpacity={0.8}
+          style={{
+            ...styles.btn,
+            backgroundColor: "#FF6C00",
+            backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
+            marginBottom: Platform.OS === "ios" ? "auto" : 16,
+          }}
+          disabled={!photo ? true : false}
         >
-          <AntDesign name="delete" size={24} color="#BDBDBD" />
+          <Text
+            style={{
+              ...styles.btnTitle,
+              color: "#fff",
+              color: !photo ? "#BDBDBD" : "#FFF",
+            }}
+          >
+            Опубликовать
+          </Text>
         </TouchableOpacity>
+        <View style={styles.blockDelete}>
+          <TouchableOpacity
+            style={styles.btnDelete}
+            activeOpacity={0.6}
+            onPress={reset}
+          >
+            <AntDesign name="delete" size={24} color="#BDBDBD" />
+          </TouchableOpacity>
+        </View>
+        {isLoading && <Loader />}
       </View>
-      {isLoading && <Loader />}
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -203,6 +222,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingHorizontal: 16,
     paddingTop: 32,
+    paddingBottom: 34,
   },
   background: { flex: 1, justifyContent: "center", alignItems: "center" },
   cameraContainer: {
@@ -237,7 +257,6 @@ const styles = StyleSheet.create({
   btn: {
     borderRadius: 100,
     paddingVertical: 16,
-    marginBottom: 16,
   },
   btnTitle: {
     textAlign: "center",
@@ -245,6 +264,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
   },
+  blockDelete: { width: "100%", alignItems: "center" },
   btnDelete: {
     width: 70,
     height: 40,

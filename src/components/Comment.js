@@ -19,11 +19,11 @@ const Comment = ({ item }) => {
       }}
     >
       {userPhoto ? (
-        <Image source={{ uri: userPhoto }} style={styles.img} />
+        <Image source={{ uri: userPhoto }} style={{...styles.img, marginLeft: userId !== id ? 0 : 16}} />
       ) : (
-        <View style={{ ...styles.img, backgroundColor: "#F6F6F6" }}></View>
+        <View style={{ ...styles.img, backgroundColor: "#F6F6F6", marginLeft: userId !== id ? 0 : 16 }}></View>
       )}
-      <View style={styles.blockCommentText}>
+      <View style={{...styles.blockCommentText, marginLeft: userId !== id ? 16 : 0, borderTopStartRadius: userId !== id ? 0 : 6, borderTopEndRadius: userId !== id ? 6 : 0}}>
         <Text style={styles.comment}>{comment}</Text>
         <Text style={styles.date}>
           {moment(date.seconds * 1000).format("DD MMMM, YYYY")}&nbsp;|&nbsp;
@@ -35,15 +35,13 @@ const Comment = ({ item }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { display: "flex", marginBottom: 24 },
+  container: { width: "100%", display: "flex", marginBottom: 24 },
   img: { height: 28, width: 28, borderRadius: 50 },
   blockCommentText: {
-    width: 290,
-    borderTopEndRadius: 6,
+    flex: 1,
     borderBottomEndRadius: 6,
     borderBottomStartRadius: 6,
     backgroundColor: "rgba(0, 0, 0, 0.03)",
-    marginLeft: "auto",
     padding: 16,
   },
   comment: {

@@ -8,6 +8,7 @@ import {
   TextInput,
   FlatList,
   Text,
+  TouchableWithoutFeedback, Keyboard
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { collection, doc, addDoc, onSnapshot, getDoc, updateDoc } from "firebase/firestore";
@@ -48,7 +49,7 @@ const CommentsScreen = ({ route }) => {
       const commentsArray = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
-      }));
+      })).sort((a,b) => a.date.seconds-b.date.seconds);
       setAllComments(commentsArray);
     });
   };
@@ -58,6 +59,11 @@ const CommentsScreen = ({ route }) => {
   }, []);
 
   return (
+    <TouchableWithoutFeedback
+    onPress={() => {
+      Keyboard.dismiss();
+    }}
+  >
     <View style={styles.container}>
       <Image source={{ uri: photo }} style={styles.img} />
       <FlatList
@@ -83,6 +89,7 @@ const CommentsScreen = ({ route }) => {
         </TouchableOpacity>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
