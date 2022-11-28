@@ -40,7 +40,7 @@ const CreatePostsScreen = ({ navigation }) => {
         return;
       }
       const locationRes = await Location.getCurrentPositionAsync({});
-      console.log("location", location);
+      console.log("location", locationRes);
       setLocation(locationRes.coords);
     })();
   }, []);
@@ -80,6 +80,7 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const takePhoto = async () => {
+    console.log(camera)
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
   };
