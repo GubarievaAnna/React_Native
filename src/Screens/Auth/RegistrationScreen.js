@@ -70,7 +70,7 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
     if (photo) {
-      const photo = await uploadPhotoToServer();
+      const photoUrl = await uploadPhotoToServer();
       dispatch(registerUser({ login, email, password, photo: photoUrl}));
       reset();
       return;
@@ -147,7 +147,7 @@ const RegistrationScreen = ({ navigation }) => {
                   <AntDesign
                     name="closecircleo"
                     size={24}
-                    color="#BDBDBD"
+                    color="#FF6C00"
                     style={styles.btnLoad}
                     onPress={deletePhoto}
                   />
