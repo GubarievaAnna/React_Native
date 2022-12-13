@@ -54,15 +54,13 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const publishPost = async () => {
-    if (!title || !place) {
-      alert("Введите название и метность");
-      return;
-    }
     setIsLoading(true);
     try {
-      const photoUrl = await uploadPhotoToServer();
+      const result = await uploadPhotoToServer();
+      const {photoUrl, uniquePostId}  = result;
       await addDoc(collection(db, "posts"), {
-        photo: photoUrl,
+        photo: photoUrl, 
+        photoId: uniquePostId,
         title,
         place,
         location,
@@ -80,7 +78,6 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const takePhoto = async () => {
-    console.log(camera)
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
   };
@@ -97,7 +94,7 @@ const CreatePostsScreen = ({ navigation }) => {
     const photoUrl = await getDownloadURL(
       ref(storage, `postImages/${uniquePostId}`)
     );
-    return photoUrl;
+    return {photoUrl, uniquePostId};
   };
 
   return (
@@ -186,17 +183,15 @@ const CreatePostsScreen = ({ navigation }) => {
           activeOpacity={0.8}
           style={{
             ...styles.btn,
-            backgroundColor: "#FF6C00",
-            backgroundColor: !photo ? "#F6F6F6" : "#FF6C00",
-            marginBottom: Platform.OS === "ios" ? "auto" : 16,
+            marginBottom: !showKeyboard ? "auto" : 20,
+            backgroundColor: !title || !photo || !place ? "#F6F6F6" : "#FF6C00",
           }}
-          disabled={!photo ? true : false}
+          disabled={!title || !photo || !place ? true : false}
         >
           <Text
             style={{
               ...styles.btnTitle,
-              color: "#fff",
-              color: !photo ? "#BDBDBD" : "#FFF",
+              color: !title || !photo || !place ? "#BDBDBD" : "#FFF",
             }}
           >
             Опубликовать
@@ -265,7 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
   },
-  blockDelete: { width: "100%", alignItems: "center" },
+  blockDelete: { width: "100%", alignItems: "center"},
   btnDelete: {
     width: 70,
     height: 40,

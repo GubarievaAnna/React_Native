@@ -27,7 +27,7 @@ const Home = ({ navigation }) => {
               name="grid-outline"
               style={{ marginLeft: 70 }}
               size={24}
-              color="rgba(33, 33, 33, 0.8)"
+              color={focused ? "#FF6C00" : "rgba(33, 33, 33, 0.8)"}
             />
           ),
           headerShown: false,
@@ -37,24 +37,17 @@ const Home = ({ navigation }) => {
         name="Create"
         component={CreatePostsScreen}
         options={{
-          tabBarHideOnKeyboard: true,
           tabBarIcon: ({ focused, size, color }) => (
             <View style={styles.iconAdd}>
               <Ionicons name="add" size={24} color="#fff" />
             </View>
           ),
+          tabBarStyle: { display: "none" },
           title: "Создать публикацию",
           headerTitleAlign: "center",
-          headerStyle: {
-            borderBottomWidth: 1,
-            borderBottomColor: "rgba(0, 0, 0, 0.3)",
-          },
+          headerStyle: { ...styles.header },
           headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
-            fontSize: 17,
-            color: "#212121",
-          },
+          headerTitleStyle: { ...styles.headerTitle },
           headerLeft: () => (
             <AntDesign
               name="arrowleft"
@@ -77,7 +70,7 @@ const Home = ({ navigation }) => {
               name="user"
               style={{ marginRight: 70 }}
               size={24}
-              color="rgba(33, 33, 33, 0.8)"
+              color={focused ? "#FF6C00" : "rgba(33, 33, 33, 0.8)"}
             />
           ),
           headerShown: false,
@@ -98,5 +91,14 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "#FF6C00",
     borderRadius: 20,
+  },
+  header: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.3)",
+  },
+  headerTitle: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 17,
+    color: "#212121",
   },
 });

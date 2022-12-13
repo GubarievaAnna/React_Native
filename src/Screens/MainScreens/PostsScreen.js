@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import {
-  logoutUser,
-} from '../../redux/auth/authOperations';
+import { logoutUser } from "../../redux/auth/authOperations";
 import DefaultScreenPosts from "../NestedScreens/DefaultScreenPosts";
 import CommentsScreen from "../NestedScreens/CommentsScreen";
 import MapScreen from "../NestedScreens/MapScreen";
@@ -21,18 +19,8 @@ const PostsScreen = ({ navigation }) => {
         name="DefaultScreenPosts"
         component={DefaultScreenPosts}
         options={{
+          ...headerOptions,
           title: "Публикации",
-          headerTitleAlign: "center",
-          headerStyle: {
-            borderBottomWidth: 0.5,
-            borderBottomColor: "rgba(0, 0, 0, 0.3)",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
-            fontSize: 17,
-            color: "#212121",
-          },
           headerRight: () => (
             <Ionicons
               name="exit-outline"
@@ -48,18 +36,8 @@ const PostsScreen = ({ navigation }) => {
         name="Comments"
         component={CommentsScreen}
         options={{
+          ...headerOptions,
           title: "Комментарии",
-          headerTitleAlign: "center",
-          headerStyle: {
-            borderBottomWidth: 0.5,
-            borderBottomColor: "rgba(0, 0, 0, 0.3)",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
-            fontSize: 17,
-            color: "#212121",
-          },
           headerLeft: () => (
             <AntDesign
               name="arrowleft"
@@ -67,7 +45,7 @@ const PostsScreen = ({ navigation }) => {
               size={24}
               color="black"
               onPress={() => {
-                navigation.goBack()
+                navigation.goBack();
               }}
             />
           ),
@@ -77,18 +55,8 @@ const PostsScreen = ({ navigation }) => {
         name="Map"
         component={MapScreen}
         options={{
+          ...headerOptions,
           title: "Карта",
-          headerTitleAlign: "center",
-          headerStyle: {
-            borderBottomWidth: 0.5,
-            borderBottomColor: "rgba(0, 0, 0, 0.3)",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
-            fontSize: 17,
-            color: "#212121",
-          },
           headerLeft: () => (
             <AntDesign
               name="arrowleft"
@@ -96,7 +64,7 @@ const PostsScreen = ({ navigation }) => {
               size={24}
               color="black"
               onPress={() => {
-                navigation.goBack()
+                navigation.goBack();
               }}
             />
           ),
@@ -107,3 +75,17 @@ const PostsScreen = ({ navigation }) => {
 };
 
 export default PostsScreen;
+
+const headerOptions = {
+  headerTitleAlign: "center",
+  headerStyle: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: "rgba(0, 0, 0, 0.3)",
+  },
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 17,
+    color: "#212121",
+  },
+};

@@ -12,7 +12,9 @@ import {
   Image,
   Platform,
 } from "react-native";
-import DocumentPicker from "react-native-document-picker";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase/config";
+import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import background from "../../assets/images/photo_bg.png";
 import { registerUser } from "../../redux/auth/authOperations";
@@ -48,36 +50,7 @@ const RegistrationScreen = ({ navigation }) => {
     setLogin("");
     setEmail("");
     setPassword("");
-  };
-
-  const registerHandler = async () => {
-    if (!login || !email || !password) {
-      alert("Введите все данные");
-      return;
-    }
-    if (photo) {
-      const photoUrl = await uploadPhotoToServer();
-      dispatch(registerUser({ login, email, password, photo: photoUrl }));
-      reset();
-      return;
-    }
-    dispatch(registerUser({ login, email, password, photo }));
-    reset();
-  };
-
-  const uploadPhotoToServer = async () => {
-    const response = await fetch(photo);
-    const file = await response.blob();
-
-    const uniqueImageId = Date.now().toString();
-
-    const storageRef = ref(storage, `authImages/${uniqueImageId}`);
-    await uploadBytes(storageRef, file);
-
-    const photoUrl = await getDownloadURL(
-      ref(storage, `authImages/${uniqueImageId}`)
-    );
-    return photoUrl;
+    setPhoto(null);
   };
 
   const showPassword = () => {
@@ -91,18 +64,53 @@ const RegistrationScreen = ({ navigation }) => {
     setSecureText("Показать");
   };
 
+  const registerHandler = async () => {
+    if (!login || !email || !password) {
+      alert("Введите все данные");
+      return;
+    }
+    if (photo) {
+      const photo = await uploadPhotoToServer();
+      dispatch(registerUser({ login, email, password, photo: photoUrl}));
+      reset();
+      return;
+    }
+    dispatch(registerUser({ login, email, password, photo: null}));
+    reset();
+  };
+
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+
+      const uniqueImageId = Date.now().toString();
+
+      const storageRef = ref(storage, `authImages/${uniqueImageId}`);
+      await uploadBytes(storageRef, file);
+
+      const photoUrl = await getDownloadURL(
+        ref(storage, `authImages/${uniqueImageId}`)
+      );
+      return photoUrl;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const loadPhoto = async () => {
     try {
-      const res = await DocumentPicker.pickSingle({
-        type: [DocumentPicker.types.allFiles],
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
       });
-      setPhoto(res.uri);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log("error -----", err);
-      } else {
-        console.log("DocumentPicker error", err);
+      if (!result.canceled) {
+        setPhoto(result.assets[0].uri);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 

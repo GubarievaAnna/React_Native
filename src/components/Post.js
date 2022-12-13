@@ -1,37 +1,60 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { doc, updateDoc, collection, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { getUserId, getUserName } from "../redux/auth/authSelectors";
+import Modal from "./Modal";
 
 const Post = ({ item, navigation }) => {
-  const { photo, title, place, location, id, comments, likes } = item;
+  const {
+    photo,
+    photoId,
+    title,
+    place,
+    location,
+    id,
+    comments,
+    likes,
+    userId: itemUserId,
+  } = item;
+  const [showModal, setShowModal] = useState(false);
   const userId = useSelector(getUserId);
   const userName = useSelector(getUserName);
   const route = useRoute();
 
-  const addLike = async () => {
-    const docRef = doc(db, "posts", id);
-    const docSnap = await getDoc(docRef);
+  const userLike = useMemo(
+    () => likes.find((item) => item.userId === userId),
+    [likes]
+  );
 
-    const docData = docSnap.data();
-    if (docData.userId === userId) {
-      alert("это ваша публикация, вы не можете ее лайкать");
+  const addLike = async () => {
+    if (itemUserId === userId) {
+      alert("Это ваша публикация, вы не можете ее лайкать");
       return;
     }
-    const ourLike = docData.likes.find((item) => item.userId === userId);
-    if (ourLike) {
-      alert("вы уже лайкали эту публикацию");
-      return;
+
+    try {
+      const docRef = doc(db, "posts", id);
+      const docSnap = await getDoc(docRef);
+      const docData = docSnap.data();
+      const ourLike = docData.likes.find((item) => item.userId === userId);
+      if (ourLike) {
+        await updateDoc(docRef, {
+          likes: docData.likes.filter((item) => item.userId !== userId),
+        });
+        return;
+      }
+      await updateDoc(docRef, {
+        likes: [...docData.likes, { userId, userName }],
+      });
+    } catch (error) {
+      console.log(error);
     }
-    await updateDoc(docRef, {
-      likes: [...docData.likes, { userId, userName }],
-    });
   };
 
   const navigateToComments = () => {
@@ -50,7 +73,19 @@ const Post = ({ item, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {showModal && (
+        <Modal setShowModal={setShowModal} id={id} photoId={photoId} />
+      )}
       <Image source={{ uri: photo }} style={styles.img} />
+      {route.name === "Profile" && (
+        <AntDesign
+          name="closecircleo"
+          size={20}
+          color="#FF6C00"
+          style={styles.btnDelete}
+          onPress={() => setShowModal(true)}
+        />
+      )}
       <Text style={styles.title}>{title}</Text>
       <View
         style={{
@@ -59,37 +94,52 @@ const Post = ({ item, navigation }) => {
         }}
       >
         <View style={styles.iconsContainer}>
-          {route.name === "Profile" ? (
-            <FontAwesome
-              name="comment"
-              size={24}
-              color="#FF6C00"
-              onPress={navigateToComments}
-            />
+          {comments > 0 ? (
+            <View style={styles.transform}>
+              <FontAwesome
+                name="comment"
+                size={20}
+                color="#FF6C00"
+                style={styles.icon}
+                onPress={navigateToComments}
+              />
+            </View>
           ) : (
-            <EvilIcons
-              name="comment"
-              size={24}
-              color="#BDBDBD"
-              onPress={navigateToComments}
-            />
+            <View style={styles.transform}>
+              <FontAwesome
+                name="comment-o"
+                size={20}
+                color="#FF6C00"
+                style={styles.icon}
+                onPress={navigateToComments}
+              />
+            </View>
           )}
           <Text style={styles.commentsText}>{comments}</Text>
         </View>
         <View style={{ ...styles.iconsContainer, marginLeft: 24 }}>
-          <AntDesign
-            name="like2"
-            size={20}
-            color={route.name === "Profile" ? "#FF6C00" : "#BDBDBD"}
-            onPress={addLike}
-          />
+          {!userLike ? (
+            <AntDesign
+              name="like2"
+              size={20}
+              color="#FF6C00"
+              onPress={addLike}
+            />
+          ) : (
+            <AntDesign
+              name="like1"
+              size={20}
+              color="#FF6C00"
+              onPress={addLike}
+            />
+          )}
           <Text style={styles.commentsText}>{likes.length}</Text>
         </View>
         <View style={{ ...styles.iconsContainer, marginLeft: "auto" }}>
           <EvilIcons
             name="location"
             size={24}
-            color="#BDBDBD"
+            color="#FF6C00"
             onPress={navigateToMap}
           />
           <Text style={styles.placeText}>{place}</Text>
@@ -101,6 +151,7 @@ const Post = ({ item, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     marginBottom: 32,
   },
   img: { width: "100%", height: 240, borderRadius: 8, marginBottom: 8 },
@@ -131,6 +182,14 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: "#212121",
     marginLeft: 4,
+  },
+  icon: {
+    transform: [{ scaleX: -1 }],
+  },
+  btnDelete: {
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
 });
 
