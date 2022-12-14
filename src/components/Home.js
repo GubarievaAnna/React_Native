@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-
 import PostsScreen from "../Screens/MainScreens/PostsScreen";
 import CreatePostsScreen from "../Screens/MainScreens/CreatePostsScreen";
 import ProfileScreen from "../Screens/MainScreens/ProfileScreen";
+import HeaderIcon from "./HeaderIcon";
+import LogoutIcon from "./LogoutIcon";
 
 const MainTab = createBottomTabNavigator();
 
@@ -30,7 +30,9 @@ const Home = ({ navigation }) => {
               color={focused ? "#FF6C00" : "rgba(33, 33, 33, 0.8)"}
             />
           ),
-          headerShown: false,
+          ...headerOptions,
+          title: "Публикации",
+          headerRight: () => <LogoutIcon style={styles.iconExit} />,
         }}
       />
       <MainTab.Screen
@@ -43,22 +45,9 @@ const Home = ({ navigation }) => {
             </View>
           ),
           tabBarStyle: { display: "none" },
+          ...headerOptions,
           title: "Создать публикацию",
-          headerTitleAlign: "center",
-          headerStyle: { ...styles.header },
-          headerTintColor: "#fff",
-          headerTitleStyle: { ...styles.headerTitle },
-          headerLeft: () => (
-            <AntDesign
-              name="arrowleft"
-              style={{ marginLeft: 20 }}
-              size={24}
-              color="black"
-              onPress={() => {
-                navigation.navigate("Posts");
-              }}
-            />
-          ),
+          headerLeft: () => <HeaderIcon navigation={navigation} />,
         }}
       />
       <MainTab.Screen
@@ -92,13 +81,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6C00",
     borderRadius: 20,
   },
-  header: {
-    borderBottomWidth: 1,
+  iconExit: { marginRight: 21 },
+});
+
+export const headerOptions = {
+  headerTitleAlign: "center",
+  headerStyle: {
+    borderBottomWidth: 0.5,
     borderBottomColor: "rgba(0, 0, 0, 0.3)",
   },
-  headerTitle: {
+  headerTintColor: "#fff",
+  headerTitleStyle: {
     fontFamily: "Roboto-Medium",
     fontSize: 17,
     color: "#212121",
   },
-});
+};

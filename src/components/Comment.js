@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/config";
 import { getUserId } from "../redux/auth/authSelectors";
 import moment from "moment";
 import "moment/locale/ru";
@@ -8,8 +10,21 @@ import "moment/locale/ru";
 moment.locale("ru");
 
 const Comment = ({ item }) => {
-  const { comment, date, userId, userPhoto } = item;
+  const { comment, date, userId } = item;
+  const [photoUrl, setPhotoUrl] = useState(null);
   const id = useSelector(getUserId);
+
+  useEffect(() => {
+    async function downloadAvatar() {
+      try {
+        const url = await getDownloadURL(ref(storage, `authImages/${userId}`));
+        setPhotoUrl(url);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    downloadAvatar();
+  }, []);
 
   return (
     <View
@@ -18,12 +33,28 @@ const Comment = ({ item }) => {
         flexDirection: userId !== id ? "row" : "row-reverse",
       }}
     >
-      {userPhoto ? (
-        <Image source={{ uri: userPhoto }} style={{...styles.img, marginLeft: userId !== id ? 0 : 16}} />
+      {photoUrl ? (
+        <Image
+          source={{ uri: photoUrl }}
+          style={{ ...styles.img, marginLeft: userId !== id ? 0 : 16 }}
+        />
       ) : (
-        <View style={{ ...styles.img, backgroundColor: "#F6F6F6", marginLeft: userId !== id ? 0 : 16 }}></View>
+        <View
+          style={{
+            ...styles.img,
+            backgroundColor: "#F6F6F6",
+            marginLeft: userId !== id ? 0 : 16,
+          }}
+        ></View>
       )}
-      <View style={{...styles.blockCommentText, marginLeft: userId !== id ? 16 : 0, borderTopStartRadius: userId !== id ? 0 : 6, borderTopEndRadius: userId !== id ? 6 : 0}}>
+      <View
+        style={{
+          ...styles.blockCommentText,
+          marginLeft: userId !== id ? 16 : 0,
+          borderTopStartRadius: userId !== id ? 0 : 6,
+          borderTopEndRadius: userId !== id ? 6 : 0,
+        }}
+      >
         <Text style={styles.comment}>{comment}</Text>
         <Text style={styles.date}>
           {moment(date.seconds * 1000).format("DD MMMM, YYYY")}&nbsp;|&nbsp;

@@ -4,18 +4,19 @@ import {
   View,
   StyleSheet,
   ImageBackground,
-  Image,
   FlatList,
   Text,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db, auth, storage } from "../../firebase/config";
 import { updateProfile } from "firebase/auth";
-import { logoutUser } from "../../redux/auth/authOperations";
 import {
   getUserName,
   getUserId,
@@ -24,6 +25,9 @@ import {
 import { changePhoto } from "../../redux/auth/authSlice";
 import background from "../../assets/images/photo_bg.png";
 import Post from "../../components/Post";
+import LogoutIcon from "../../components/LogoutIcon";
+import InputAvatar from "../../components/InputAvatar";
+import Loader from "../../components/Loader";
 
 const ProfileScreen = ({ navigation }) => {
   const name = useSelector(getUserName);
@@ -31,6 +35,7 @@ const ProfileScreen = ({ navigation }) => {
   const photo = useSelector(getUserPhoto);
 
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -64,27 +69,29 @@ const ProfileScreen = ({ navigation }) => {
   const changePhotoAvatar = async () => {
     try {
       const loadedPhoto = await loadPhoto();
+      setIsLoading(true);
       const response = await fetch(loadedPhoto);
       const file = await response.blob();
-
-      const uniqueImageId = Date.now().toString();
-
-      const storageRef = ref(storage, `authImages/${uniqueImageId}`);
+      const storageRef = ref(storage, `authImages/${userId}`);
       await uploadBytes(storageRef, file);
 
       const photoUrl = await getDownloadURL(
-        ref(storage, `authImages/${uniqueImageId}`)
+        ref(storage, `authImages/${userId}`)
       );
       await updateProfile(auth.currentUser, { photoURL: photoUrl });
       dispatch(changePhoto(photoUrl));
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deletePhoto = async () => {
     try {
       await updateProfile(auth.currentUser, { photoURL: null });
+      const desertRef = ref(storage, `authImages/${userId}`);
+      await deleteObject(desertRef);
       dispatch(changePhoto(null));
     } catch (error) {
       console.log(error);
@@ -95,37 +102,12 @@ const ProfileScreen = ({ navigation }) => {
     <View style={styles.container}>
       <ImageBackground source={background} style={styles.background}>
         <View style={styles.block}>
-          <View style={styles.photoBlock}>
-            {photo ? (
-              <>
-                <Image source={{ uri: photo }} style={styles.img} />
-                <AntDesign
-                  name="closecircleo"
-                  size={24}
-                  color="#FF6C00"
-                  style={styles.btn}
-                  onPress={deletePhoto}
-                />
-              </>
-            ) : (
-              <View style={styles.img}>
-                <AntDesign
-                  name="pluscircleo"
-                  size={24}
-                  color="#FF6C00"
-                  onPress={changePhotoAvatar}
-                  style={styles.btn}
-                />
-              </View>
-            )}
-          </View>
-          <Ionicons
-            name="exit-outline"
-            style={styles.iconExit}
-            size={24}
-            color="#BDBDBD"
-            onPress={() => dispatch(logoutUser())}
+          <InputAvatar
+            photo={photo}
+            deletePhoto={deletePhoto}
+            changePhotoAvatar={changePhotoAvatar}
           />
+          <LogoutIcon style={styles.iconExit} />
           <Text style={styles.name}>{name}</Text>
           <FlatList
             data={posts}
@@ -134,6 +116,7 @@ const ProfileScreen = ({ navigation }) => {
               <Post item={item} navigation={navigation} />
             )}
           />
+          {isLoading && <Loader />}
         </View>
       </ImageBackground>
     </View>
@@ -155,25 +138,6 @@ const styles = StyleSheet.create({
     marginTop: 103,
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
-  },
-  photoBlock: {
-    position: "absolute",
-    top: -60,
-    left: "36%",
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: "#F6F6F6",
-  },
-  img: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-  },
-  btn: {
-    position: "absolute",
-    right: -12,
-    bottom: 18,
   },
   iconExit: { position: "absolute", top: 22, right: 16 },
   name: {

@@ -22,7 +22,7 @@ const ModalDelete = ({ setShowModal, id, photoId }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>
-            Вы уверены, что хотите удалить это фото?
+            Вы уверены, что хотите удалить этот пост?
           </Text>
           <View style={styles.btnBlock}>
             <TouchableOpacity

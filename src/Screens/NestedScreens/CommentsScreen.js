@@ -7,7 +7,6 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
-  Text,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
@@ -22,7 +21,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { getUserId, getUserPhoto } from "../../redux/auth/authSelectors";
+import { getUserId} from "../../redux/auth/authSelectors";
 import Comment from "../../components/Comment";
 
 const CommentsScreen = ({ route }) => {
@@ -33,17 +32,19 @@ const CommentsScreen = ({ route }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
 
   const userId = useSelector(getUserId);
-  const userPhoto = useSelector(getUserPhoto);
 
   const commentHandler = (text) => setComment(text);
 
   const addComment = async () => {
+    if (!comment) {
+      alert("Введите комментарий");
+      return;
+    }
     const date = new Date();
     await addDoc(collection(db, "posts", postId, "comments"), {
       comment,
       date,
       userId,
-      userPhoto,
     });
 
     const docRef = doc(db, "posts", postId);
@@ -85,7 +86,12 @@ const CommentsScreen = ({ route }) => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <Comment item={item} />}
         />
-        <View style={{...styles.blockInput, marginBottom: Platform.OS === "ios" && showKeyboard ? 220 : 0}}>
+        <View
+          style={{
+            ...styles.blockInput,
+            marginBottom: Platform.OS === "ios" && showKeyboard ? 220 : 16,
+          }}
+        >
           <TextInput
             placeholder="Комментировать..."
             value={comment}

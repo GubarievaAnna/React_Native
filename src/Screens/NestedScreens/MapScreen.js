@@ -1,9 +1,11 @@
+import { useRoute } from "@react-navigation/native";
 import React from "react";
 import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-const MapScreen = ({ route }) => {
- 
+const MapScreen = () => {
+  const route = useRoute();
+
   return (
     <View style={{ flex: 1 }}>
       <MapView

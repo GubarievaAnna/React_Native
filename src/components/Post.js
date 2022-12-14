@@ -4,10 +4,11 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { getUserId, getUserName } from "../redux/auth/authSelectors";
+import CommentsIcon from "./CommentsIcon";
+import LikeIcon from "./LikeIcon";
 import Modal from "./Modal";
 
 const Post = ({ item, navigation }) => {
@@ -58,16 +59,24 @@ const Post = ({ item, navigation }) => {
   };
 
   const navigateToComments = () => {
-    navigation.navigate("Comments", {
-      postId: id,
-      photo,
+    navigation.navigate("AddInfo", {
+      screen: "Comments",
+      params: {
+        postId: id,
+        photo,
+        back: route.name,
+      },
     });
   };
 
   const navigateToMap = () => {
-    navigation.navigate("Map", {
-      latitude: location ? location.latitude : 0,
-      longitude: location ? location.longitude : 0,
+    navigation.navigate("AddInfo", {
+      screen: "Map",
+      params: {
+        latitude: location ? location.latitude : 0,
+        longitude: location ? location.longitude : 0,
+        back: route.name,
+      },
     });
   };
 
@@ -95,43 +104,17 @@ const Post = ({ item, navigation }) => {
       >
         <View style={styles.iconsContainer}>
           {comments > 0 ? (
-            <View style={styles.transform}>
-              <FontAwesome
-                name="comment"
-                size={20}
-                color="#FF6C00"
-                style={styles.icon}
-                onPress={navigateToComments}
-              />
-            </View>
+            <CommentsIcon name="comment" onPress={navigateToComments} />
           ) : (
-            <View style={styles.transform}>
-              <FontAwesome
-                name="comment-o"
-                size={20}
-                color="#FF6C00"
-                style={styles.icon}
-                onPress={navigateToComments}
-              />
-            </View>
+            <CommentsIcon name="comment-o" onPress={navigateToComments} />
           )}
           <Text style={styles.commentsText}>{comments}</Text>
         </View>
         <View style={{ ...styles.iconsContainer, marginLeft: 24 }}>
           {!userLike ? (
-            <AntDesign
-              name="like2"
-              size={20}
-              color="#FF6C00"
-              onPress={addLike}
-            />
+            <LikeIcon name="like2" onPress={addLike} />
           ) : (
-            <AntDesign
-              name="like1"
-              size={20}
-              color="#FF6C00"
-              onPress={addLike}
-            />
+            <LikeIcon name="like1" onPress={addLike} />
           )}
           <Text style={styles.commentsText}>{likes.length}</Text>
         </View>
@@ -182,9 +165,6 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: "#212121",
     marginLeft: 4,
-  },
-  icon: {
-    transform: [{ scaleX: -1 }],
   },
   btnDelete: {
     position: "absolute",

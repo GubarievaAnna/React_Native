@@ -12,8 +12,6 @@ import {
   Image,
   Platform,
 } from "react-native";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebase/config";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import background from "../../assets/images/photo_bg.png";
@@ -21,6 +19,7 @@ import { registerUser } from "../../redux/auth/authOperations";
 import { getAuthError, getAuthLoading } from "../../redux/auth/authSelectors";
 import { changeError } from "../../redux/auth/authSlice";
 import Loader from "../../components/Loader";
+import InputAvatar from "../../components/InputAvatar";
 
 const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState("");
@@ -32,7 +31,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [secure, setSecure] = useState(true);
   const [secureText, setSecureText] = useState("Показать");
-  const [photo, setPhoto] = useState();
+  const [photo, setPhoto] = useState(null);
 
   const isLoading = useSelector(getAuthLoading);
   const error = useSelector(getAuthError);
@@ -64,41 +63,7 @@ const RegistrationScreen = ({ navigation }) => {
     setSecureText("Показать");
   };
 
-  const registerHandler = async () => {
-    if (!login || !email || !password) {
-      alert("Введите все данные");
-      return;
-    }
-    if (photo) {
-      const photoUrl = await uploadPhotoToServer();
-      dispatch(registerUser({ login, email, password, photo: photoUrl}));
-      reset();
-      return;
-    }
-    dispatch(registerUser({ login, email, password, photo: null}));
-    reset();
-  };
-
-  const uploadPhotoToServer = async () => {
-    try {
-      const response = await fetch(photo);
-      const file = await response.blob();
-
-      const uniqueImageId = Date.now().toString();
-
-      const storageRef = ref(storage, `authImages/${uniqueImageId}`);
-      await uploadBytes(storageRef, file);
-
-      const photoUrl = await getDownloadURL(
-        ref(storage, `authImages/${uniqueImageId}`)
-      );
-      return photoUrl;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const loadPhoto = async () => {
+  const changePhotoAvatar = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -117,6 +82,16 @@ const RegistrationScreen = ({ navigation }) => {
   const deletePhoto = () => {
     setPhoto(null);
   };
+
+  const registerHandler = async () => {
+    if (!login || !email || !password) {
+      alert("Введите все данные");
+      return;
+    }
+      dispatch(registerUser({ login, email, password, photo}));
+      reset();
+  };
+
 
   const onLinkClick = () => {
     if (error) {
@@ -140,30 +115,7 @@ const RegistrationScreen = ({ navigation }) => {
               paddingBottom: Platform.OS == "android" && showKeyboard ? 0 : 78,
             }}
           >
-            <View style={styles.photoBlock}>
-              {photo ? (
-                <>
-                  <Image source={{ uri: photo }} style={styles.img} />
-                  <AntDesign
-                    name="closecircleo"
-                    size={24}
-                    color="#FF6C00"
-                    style={styles.btnLoad}
-                    onPress={deletePhoto}
-                  />
-                </>
-              ) : (
-                <View style={styles.img}>
-                  <AntDesign
-                    name="pluscircleo"
-                    size={24}
-                    color="#FF6C00"
-                    onPress={loadPhoto}
-                    style={styles.btnLoad}
-                  />
-                </View>
-              )}
-            </View>
+            <InputAvatar photo={photo} deletePhoto={deletePhoto} changePhotoAvatar={changePhotoAvatar}/>
             <Text style={styles.title}>Регистрация</Text>
             <TextInput
               placeholder="Логин"
@@ -276,7 +228,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     width: "100%",
-    // alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
     borderTopStartRadius: 25,
@@ -354,25 +305,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
-  },
-  photoBlock: {
-    position: "absolute",
-    top: -60,
-    left: "36%",
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: "#F6F6F6",
-  },
-  img: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-  },
-  btnLoad: {
-    position: "absolute",
-    right: -12,
-    bottom: 18,
   },
 });
 

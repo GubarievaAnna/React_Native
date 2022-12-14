@@ -7,6 +7,8 @@ import {
   onAuthStateChanged,
   updateProfile,
 } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase/config";
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -19,10 +21,22 @@ export const registerUser = createAsyncThunk(
         password
       );
       const user = userCredential.user;
+      const id = user.uid;
+
+      let photoUrl = null;
+
+      if (photo) {
+        const response = await fetch(photo);
+        const file = await response.blob();
+        const storageRef = ref(storage, `authImages/${id}`);
+        await uploadBytes(storageRef, file);
+
+        photoUrl = await getDownloadURL(ref(storage, `authImages/${id}`));
+      }
 
       await updateProfile(user, {
         displayName: login,
-        photoURL: photo,
+        photoURL: photoUrl,
       });
 
       const { uid, email: userEmail, displayName, photoURL } = user;
@@ -81,30 +95,27 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-export const currentUser = createAsyncThunk(
-  "auth/current",
-  async () => {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe();
-        if (user) {
-          resolve({
-            userId: user.uid,
-            name: user.displayName,
-            email: user.email,
-            photo: user.photoURL,
-            isAuth: true,
-          });
-        } else {
-          resolve({
-            userId: "",
-            name: "",
-            email: "",
-            photo: "",
-            isAuth: false,
-          });
-        }
-      });
+export const currentUser = createAsyncThunk("auth/current", async () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+      if (user) {
+        resolve({
+          userId: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+          isAuth: true,
+        });
+      } else {
+        resolve({
+          userId: "",
+          name: "",
+          email: "",
+          photo: "",
+          isAuth: false,
+        });
+      }
     });
-  }
-);
+  });
+});
